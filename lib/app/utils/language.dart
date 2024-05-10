@@ -6,6 +6,11 @@ class LanguageTranslations extends Translations {
     'en_US': {
       ///Home Page
       'app_name':"Cinepedia",
+      'now_showing':"Now Plying Movies",
+      'see_more':"See More",
+      'popular':"Popular",
+      'release_date':"Release Date",
+      'trending':"Trending",
 
     },
     'bn_BD': {

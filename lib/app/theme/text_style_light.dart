@@ -11,7 +11,7 @@ final headlineMedium = TextStyle(fontFamily: 'Nunito',color: AppColor.primary,fo
 final headlineSmall = TextStyle(fontFamily: 'Nunito',color: AppColor.primary,fontSize: 24);
 ///title
 final titleLarge = TextStyle(fontFamily: 'Nunito',color: AppColor.primary,fontSize: 22);
-final titleMedium = TextStyle(fontFamily: 'Nunito',color: AppColor.primary,fontSize: 18);
+final titleMedium = TextStyle(fontFamily: 'Nunito',color: AppColor.primary,fontSize: 18,fontWeight: FontWeight.w500);
 final titleSmall = TextStyle(fontFamily: 'Nunito',color: AppColor.primary,fontSize: 16);
 ///Label
 final labelLarge = TextStyle(fontFamily: 'Nunito',color: AppColor.primary,fontSize: 14);

@@ -11,16 +11,21 @@ ThemeData lightMode = ThemeData.light().copyWith(
       iconTheme: IconThemeData(color: Colors.white),
     ),
     primaryColor: AppColor.primary,
-    iconTheme: IconThemeData(color: Colors.white),
+    cardColor: AppColor.secondary,
+    iconTheme: IconThemeData(),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
+        // padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 16,vertical: 0)),
+        shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
         side: MaterialStateProperty.all<BorderSide>(
             BorderSide(color: AppColor.secondary)),
+        elevation: MaterialStatePropertyAll(4)
       ),
+
     ),
     primaryColorDark: AppColor.primary,
     colorScheme: const ColorScheme.light(
-      primary: AppColor.primaryDark,
+      primary: AppColor.primary,
       onPrimary: Colors.black,
       secondary: AppColor.secondaryDark,
       onSecondary: Colors.white,
@@ -52,7 +57,7 @@ ThemeData darkMode = ThemeData.dark().copyWith(
   colorScheme: const ColorScheme.dark(
     primary: AppColor.primaryDark,
     onPrimary: Color(0xFF381E72),
-    secondary: AppColor.secondaryDark,
+    secondary: AppColor.primaryDark,
     onSecondary: Colors.white,
     error: AppColor.error,
     onError: Colors.red,

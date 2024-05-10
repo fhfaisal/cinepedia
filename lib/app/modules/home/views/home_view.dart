@@ -1,9 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinepedia/app/theme/colors.dart';
 import 'package:cinepedia/app/theme/theme.dart';
+import 'package:cinepedia/app/utils/constants.dart';
+import 'package:cinepedia/app/utils/design_elemints.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
 
+import '../../../utils/section_separation.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -26,59 +33,211 @@ class HomeView extends GetView<HomeController> {
               icon: Icon(Get.isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined))
         ],
       ),
-      body: Center(
-        child: ListView(
-          children: [
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.displayLarge,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.displayMedium,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.displaySmall,),
-
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.headlineLarge,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.headlineMedium,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.headlineSmall,),
-
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.titleLarge,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.titleMedium,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.titleSmall,),
-
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.labelLarge,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.labelMedium,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.labelSmall,),
-
-
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.bodyLarge,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.bodyMedium,),
-            Text('Hello Flutter',
-              style: Theme.of(context).textTheme.bodySmall),
-            OutlinedButton(
-              onPressed: () {
-                Get.changeTheme(
-                  Get.isDarkMode ? lightMode : darkMode,
-                );
-                print(Get.isDarkMode);
-              },
-              child: Text(
-                'Change Theme',
-                style: Theme.of(context).textTheme.bodySmall,
+      body: SingleChildScrollView(
+        child: Container(
+          margin: fixMargin().copyWith(top: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SectionSeparation(
+                separationText: 'now_showing'.tr,
+                actionText: 'see_more'.tr,
               ),
-            ),
-          ],
+              NowPlaying(controller: controller),
+              SectionSeparation(
+                separationText: 'popular'.tr,
+                actionText: 'see_more'.tr,
+              ),
+              PopularMovie(controller: controller),
+              SectionSeparation(
+                separationText: 'trending'.tr,
+                actionText: 'see_more'.tr,
+              ),
+              Trending(controller: controller)
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class Trending extends StatelessWidget {
+  const Trending({
+    super.key,
+    required this.controller,
+  });
+
+  final HomeController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 150,
+      child: Obx(() => controller.isLoading.value == false
+          ? ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: controller.nowPlayingResponse.value.results!.length,
+        itemBuilder: (context, index) => Container(
+          width: 70,
+          margin: const EdgeInsets.only(right: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                elevation: 5,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: CachedNetworkImage(
+                      imageUrl:
+                      '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).posterPath!}',
+                      placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Image.asset('assets/logo/logo.png'),
+                      imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                      placeholderFadeInDuration: const Duration(milliseconds: 500),
+                      fit: BoxFit.fitHeight,
+                      height: 90,
+                    )),
+              ),
+              Text(
+                controller.nowPlayingResponse.value.results!.elementAt(index).title!,
+                style: Theme.of(context).textTheme.bodyMedium,
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+              ),
+            ],
+          ),
+        ),
+      )
+          : const Center(
+        child: CircularProgressIndicator(),
+      )),
+    );
+  }
+}
+
+class PopularMovie extends StatelessWidget {
+  const PopularMovie({
+    super.key,
+    required this.controller,
+  });
+
+  final HomeController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 160,
+      child: Obx(() => controller.isLoading.value == false
+          ? ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.popularResponse.value.results!.length,
+              itemBuilder: (context, index) => Container(
+                width: 150,
+                margin: const EdgeInsets.only(right: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      elevation: 5,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                '${Constants.posterUrl}${controller.popularResponse.value.results!.elementAt(index).backdropPath}',
+                            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => const Center(child: CircularProgressIndicator()),
+                            imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                            placeholderFadeInDuration: const Duration(milliseconds: 500),
+                            fit: BoxFit.cover,
+                          )),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      controller.popularResponse.value.results!.elementAt(index).title!,
+                      style: Theme.of(context).textTheme.labelMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.fade,
+                    ),
+                    Text(
+                      '${'release_date'.tr} ${formatOnlyDate(controller.popularResponse.value.results!.elementAt(index).releaseDate!)}',
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(height: 2),
+                      maxLines: 2,
+                      overflow: TextOverflow.fade,
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            )),
+    );
+  }
+}
+
+class NowPlaying extends StatelessWidget {
+  final HomeController controller;
+
+  const NowPlaying({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 300,
+      child: Obx(() => controller.isLoading.value == false
+          ? ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.nowPlayingResponse.value.results!.length,
+              itemBuilder: (context, index) => Container(
+                width: 150,
+                margin: const EdgeInsets.only(right: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      elevation: 5,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).posterPath!}',
+                            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Image.asset('assets/logo/logo.png'),
+                            imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                            placeholderFadeInDuration: const Duration(milliseconds: 500),
+                            fit: BoxFit.cover,
+                          )),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      controller.nowPlayingResponse.value.results!.elementAt(index).title!,
+                      style: Theme.of(context).textTheme.labelMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.fade,
+                    ),
+                    Text(
+                      '${'release_date'.tr} ${formatOnlyDate(controller.nowPlayingResponse.value.results!.elementAt(index).releaseDate!)}',
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(height: 2),
+                      maxLines: 2,
+                      overflow: TextOverflow.fade,
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            )),
     );
   }
 }
