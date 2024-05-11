@@ -11,6 +11,13 @@ class LanguageTranslations extends Translations {
       'popular':"Popular",
       'release_date':"Release Date",
       'trending':"Trending",
+      ///Bottom Navigation
+      'home':"Home",
+      'categories':"Categories",
+      'search':"Search",
+      'search_empty_title':"Under Development",
+      'search_empty_message':"This page under the development phase"
+
 
     },
     'bn_BD': {

@@ -1,6 +1,7 @@
 import 'package:cinepedia/app/theme/text_style_dark.dart';
 import 'package:cinepedia/app/theme/text_style_light.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'colors.dart';
 
@@ -43,6 +44,7 @@ ThemeData darkMode = ThemeData.dark().copyWith(
   appBarTheme: const AppBarTheme(
   color: AppColor.bgDark,
   titleTextStyle: TextStyle(color: Colors.white),
+  systemOverlayStyle: SystemUiOverlayStyle.dark,
   iconTheme: IconThemeData(color: Colors.white),
 ),
   primaryColor: AppColor.primary,
