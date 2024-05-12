@@ -8,6 +8,7 @@ class AppColor{
   static const Color bgLight = Color(0xFF540BA1);
   static const Color bgDark = Color(0xFF242A32);
   static const Color error = Color(0xFFB3261E);
+  static const Color errorContainer = Color(0xFF575853);
   static const Color errorDark = Color(0xFFF2B8B5);
   static const Color surface = Color(0xFFFEF7FF);
   static const Color surfaceDark = Color(0xFF141218);

@@ -6,6 +6,7 @@ class Constants{
   static const String authToken="eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4NGUyMDNjNmM0ZGU2ZDE0YWU4NTFmZjg2YTRmZDNkZiIsInN1YiI6IjY2MzZmZDY5OTU5MGUzMDEyY2JjODE0ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cxC4PSTxclxSmWI9lAYXom9NvhP5ds15d-G3xyHRTXU";
   static const String nowPlying="movie/now_playing";
   static const String moviePopular="movie/movie/popular";
+  static const String movieDetails="movie/";
   static const String posterUrl="https://image.tmdb.org/t/p/original/";
   static const String logInEmail="login";
   static const String signUp="register";

@@ -1,5 +1,4 @@
 import 'package:cinepedia/app/utils/imagePath/common.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EmptyPage extends StatelessWidget {

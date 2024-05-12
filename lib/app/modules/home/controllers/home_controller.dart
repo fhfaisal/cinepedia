@@ -1,5 +1,6 @@
 import 'package:cinepedia/app/data/now_playing.dart';
 import 'package:cinepedia/app/repository/home_repository.dart';
+import 'package:cinepedia/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 
 import '../../../utils/constants.dart';
@@ -49,6 +50,9 @@ class HomeController extends GetxController {
     });
     update();
     return null;
+  }
+  navigateToMovieDetails(index){
+    Get.toNamed(Routes.MOVIE_DETAILS,arguments: nowPlayingResponse.value.results!.elementAt(index).id);
   }
 
 
