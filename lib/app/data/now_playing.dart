@@ -131,13 +131,15 @@ class Result {
 enum OriginalLanguage {
   EN,
   ES,
-  FR
+  FR,
+  JA
 }
 
 final originalLanguageValues = EnumValues({
   "en": OriginalLanguage.EN,
   "es": OriginalLanguage.ES,
-  "fr": OriginalLanguage.FR
+  "fr": OriginalLanguage.FR,
+  "ja": OriginalLanguage.JA
 });
 
 class EnumValues<T> {

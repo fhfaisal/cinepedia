@@ -1,7 +1,11 @@
+import 'dart:ui';
+
 import 'package:cinepedia/app/data/now_playing.dart';
 import 'package:cinepedia/app/repository/home_repository.dart';
 import 'package:cinepedia/app/routes/app_pages.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 
 import '../../../utils/constants.dart';
 
@@ -10,10 +14,31 @@ class HomeController extends GetxController {
   final Rx<NowPlayingResponse> nowPlayingResponse = NowPlayingResponse().obs;
   final Rx<NowPlayingResponse> popularResponse = NowPlayingResponse().obs;
 
+
+  final RxList<Color> colors = [
+    Colors.red,
+    Colors.orange,
+    Colors.yellow,
+    Colors.green,
+    Colors.blue,
+    Colors.indigo,
+    Colors.purple,
+  ].obs;
+  final RxList<String> letters = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+  ].obs;
+  RxBool isPlaying = false.obs;
+
   @override
   void onInit() {
     nowPlayingResponseDataCall();
-    popularDataCall();
+    // popularDataCall();
     super.onInit();
   }
 

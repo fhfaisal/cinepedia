@@ -1,17 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cinepedia/app/theme/theme.dart';
+import 'package:cinepedia/app/utils/buttons/primary_button.dart';
 import 'package:cinepedia/app/utils/constants.dart';
-import 'package:cinepedia/app/utils/design_elemints.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cinepedia/app/utils/design_elements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
 
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../utils/section_separation.dart';
 import '../../../utils/widgets/loader/now_playing.dart';
+import '../../../utils/widgets/loader/shimmer_loading.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -20,45 +22,88 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: Get.isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-        title: Text(
-          'app_name'.tr,
-          style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.white),
-        ),
-        actions: [
-          IconButton(
-              onPressed: () => Get.changeTheme(
-                    Get.isDarkMode ? lightMode : darkMode,
-                  ),
-              icon: Icon(Get.isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined))
-        ],
-      ),
+      appBar: _homeAppbar(context),
       body: SingleChildScrollView(
-        child: Container(
-          margin: fixMargin().copyWith(top: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SectionSeparation(
-                separationText: 'now_showing'.tr,
-                actionText: 'see_more'.tr,
-              ),
-              NowPlaying(controller: controller),
-              SectionSeparation(
-                separationText: 'popular'.tr,
-                actionText: 'see_more'.tr,
-              ),
-              PopularMovie(controller: controller),
-              // SectionSeparation(
-              //   separationText: 'trending'.tr,
-              //   actionText: 'see_more'.tr,
-              // ),
-              // Trending(controller: controller)
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Obx(() => controller.isLoading.value
+                ? const SizedBox(height:300,child: ShimmerLoading())
+                : SizedBox(
+                    height: 300,
+                    child: CarouselSlider.builder(
+                      unlimitedMode: true,
+                      autoSliderDelay: const Duration(seconds: 500),
+                      autoSliderTransitionCurve: Curves.linear,
+                      autoSliderTransitionTime: const Duration(seconds: 200),
+                      slideTransform: AccordionTransform(),
+                      slideIndicator: CircularSlideIndicator(
+                          padding: const EdgeInsets.only(bottom: 32),
+                          currentIndicatorColor: Theme.of(context).colorScheme.secondary),
+                      itemCount: controller.nowPlayingResponse.value.results!.length - 15,
+                      slideBuilder: (index) {
+                        return GestureDetector(
+                          onTap: () => controller.navigateToMovieDetails(index),
+                          child: Stack(
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl:
+                                    '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).backdropPath ?? controller.nowPlayingResponse.value.results!.elementAt(index).posterPath}',
+                                fit: BoxFit.fitHeight,
+                                width: double.maxFinite,
+                                height: 300,
+                                placeholder: (context, url) => const SizedBox(
+                                  height: 300,
+                                  child: ShimmerLoading(),
+                                ),
+                              ),
+                              Center(
+                                child: Text(
+                                  controller.nowPlayingResponse.value.results!.elementAt(index).title ??
+                                      controller.nowPlayingResponse.value.results!.elementAt(index).originalTitle!,
+                                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )))
+            //   SectionSeparation(
+            //     separationText: 'now_showing'.tr,
+            //     actionText: 'see_more'.tr,
+            //   ),
+            //   NowPlaying(controller: controller),
+            //   SectionSeparation(
+            //     separationText: 'popular'.tr,
+            //     actionText: 'see_more'.tr,
+            //   ),
+            //   PopularMovie(controller: controller),
+            //   // SectionSeparation(
+            //   //   separationText: 'trending'.tr,
+            //   //   actionText: 'see_more'.tr,
+            //   // ),
+            //   // Trending(controller: controller)
+          ],
         ),
       ),
+    );
+  }
+
+  AppBar _homeAppbar(BuildContext context) {
+    return AppBar(
+      systemOverlayStyle: Get.isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      title: Text(
+        'app_name'.tr,
+        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.white),
+      ),
+      actions: [
+        IconButton(
+            onPressed: () => Get.changeTheme(
+                  Get.isDarkMode ? lightMode : darkMode,
+                ),
+            icon: Icon(Get.isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined))
+      ],
     );
   }
 }
@@ -100,18 +145,7 @@ class NowPlaying extends StatelessWidget {
                                     '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).posterPath!}',
                                 placeholder: (context, url) => SizedBox(
                                   height: 220,
-                                  child: Shimmer.fromColors(
-                                    baseColor: Colors.red,
-                                    highlightColor: Colors.yellow,
-                                    direction: ShimmerDirection.ltr,
-                                    child: Center(
-                                      child: Text(
-                                        'Loading',
-                                        textAlign: TextAlign.center,
-                                        style: Theme.of(context).textTheme.titleMedium,
-                                      ),
-                                    ),
-                                  ),
+                                  child: ShimmerLoading(),
                                 ),
                               )),
                         ),
@@ -140,7 +174,6 @@ class NowPlaying extends StatelessWidget {
   }
 }
 
-
 class PopularMovie extends StatelessWidget {
   const PopularMovie({
     super.key,
@@ -154,59 +187,60 @@ class PopularMovie extends StatelessWidget {
     return SizedBox(
       height: 160,
       child: Obx(() => controller.isLoading.value
-        ?ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 10,
-        itemBuilder: (context, index) => Container(
-          width: 150,
-          margin: const EdgeInsets.only(right: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Shimmer.fromColors(
-                baseColor: Theme.of(context).colorScheme.errorContainer,
-                highlightColor: Theme.of(context).highlightColor,
-                direction: ShimmerDirection.ltr,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  elevation: 5,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: SizedBox(
-                      height: 90,
-                      child: Shimmer.fromColors(
-                        baseColor: Colors.red,
-                        highlightColor: Colors.yellow,
-                        direction: ShimmerDirection.ltr,
-                        child: Center(
-                          child: Text(
-                            'Loading',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleMedium,
+          ? ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 10,
+              itemBuilder: (context, index) => Container(
+                width: 150,
+                margin: const EdgeInsets.only(right: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Shimmer.fromColors(
+                      baseColor: Theme.of(context).colorScheme.errorContainer,
+                      highlightColor: Theme.of(context).highlightColor,
+                      direction: ShimmerDirection.ltr,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        elevation: 5,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: SizedBox(
+                            height: 90,
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.red,
+                              highlightColor: Colors.yellow,
+                              direction: ShimmerDirection.ltr,
+                              child: Center(
+                                child: Text(
+                                  'Loading',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),),
+                    ),
+                    const SizedBox(height: 8),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade200,
+                      child: Container(
+                        height: 20,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.0),
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Shimmer.fromColors(
-                baseColor: Colors.grey.shade300,
-                highlightColor: Colors.grey.shade200,
-                child: Container(
-                  height: 20,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
+            )
           : ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: controller.popularResponse.value.results!.length,
@@ -226,7 +260,7 @@ class PopularMovie extends StatelessWidget {
                           borderRadius: BorderRadius.circular(5),
                           child: CachedNetworkImage(
                             height: 90,
-                            imageUrl:controller.popularResponse.value.results!.elementAt(index).backdropPath != null
+                            imageUrl: controller.popularResponse.value.results!.elementAt(index).backdropPath != null
                                 ? '${Constants.posterUrl}${controller.popularResponse.value.results!.elementAt(index).backdropPath}'
                                 : 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/640px-Image_not_available.png',
                             placeholder: (context, url) => SizedBox(

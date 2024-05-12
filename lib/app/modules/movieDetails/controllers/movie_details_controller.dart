@@ -30,9 +30,9 @@ class MovieDetailsController extends GetxController {
   // Function to initialize movieId with Get.arguments
   void initializeMovieId() {
     // Get.arguments should be used after the widget is pushed with navigation
-    final args = Get.arguments;
-    if (args != null && args is int) {
-      movieId = args;
+    final getId = Get.arguments;
+    if (getId != null && getId is int) {
+      movieId = getId;
       // Fetch movie details using the received movieId
       fetchMovieDetails();
     } else {
