@@ -13,6 +13,7 @@ class HomeController extends GetxController {
   final isLoading = false.obs;
   final Rx<NowPlayingResponse> nowPlayingResponse = NowPlayingResponse().obs;
   final Rx<NowPlayingResponse> popularResponse = NowPlayingResponse().obs;
+  var selectedIndex = 0.obs;
 
 
   final RxList<Color> colors = [

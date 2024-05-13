@@ -6,8 +6,13 @@ class LanguageTranslations extends Translations {
     'en_US': {
       ///Home Page
       'app_name':"Cinepedia",
+      'coming_soon':"Coming Soon",
+      'adventure':"Adventure",
+      'family':"Family",
+      'fantasy':"Fantasy",
+      'more_info':"More Info",
       'now_showing':"Now Plying Movies",
-      'see_more':"See More",
+      'show_all':"Show all",
       'popular':"Popular",
       'release_date':"Release Date",
       'trending':"Trending",

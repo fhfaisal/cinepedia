@@ -3,14 +3,18 @@ import 'package:cinepedia/app/theme/theme.dart';
 import 'package:cinepedia/app/utils/buttons/primary_button.dart';
 import 'package:cinepedia/app/utils/constants.dart';
 import 'package:cinepedia/app/utils/design_elements.dart';
+import 'package:cinepedia/app/utils/widgets/loader/trending_shimmer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../utils/gradiant_text.dart';
 import '../../../utils/section_separation.dart';
 import '../../../utils/widgets/loader/now_playing.dart';
 import '../../../utils/widgets/loader/shimmer_loading.dart';
@@ -27,63 +31,22 @@ class HomeView extends GetView<HomeController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Obx(() => controller.isLoading.value
-                ? const SizedBox(height:300,child: ShimmerLoading())
-                : SizedBox(
-                    height: 300,
-                    child: CarouselSlider.builder(
-                      unlimitedMode: true,
-                      autoSliderDelay: const Duration(seconds: 500),
-                      autoSliderTransitionCurve: Curves.linear,
-                      autoSliderTransitionTime: const Duration(seconds: 200),
-                      slideTransform: AccordionTransform(),
-                      slideIndicator: CircularSlideIndicator(
-                          padding: const EdgeInsets.only(bottom: 32),
-                          currentIndicatorColor: Theme.of(context).colorScheme.secondary),
-                      itemCount: controller.nowPlayingResponse.value.results!.length - 15,
-                      slideBuilder: (index) {
-                        return GestureDetector(
-                          onTap: () => controller.navigateToMovieDetails(index),
-                          child: Stack(
-                            children: [
-                              CachedNetworkImage(
-                                imageUrl:
-                                    '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).backdropPath ?? controller.nowPlayingResponse.value.results!.elementAt(index).posterPath}',
-                                fit: BoxFit.fitHeight,
-                                width: double.maxFinite,
-                                height: 300,
-                                placeholder: (context, url) => const SizedBox(
-                                  height: 300,
-                                  child: ShimmerLoading(),
-                                ),
-                              ),
-                              Center(
-                                child: Text(
-                                  controller.nowPlayingResponse.value.results!.elementAt(index).title ??
-                                      controller.nowPlayingResponse.value.results!.elementAt(index).originalTitle!,
-                                  style: const TextStyle(fontSize: 20, color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    )))
-            //   SectionSeparation(
-            //     separationText: 'now_showing'.tr,
-            //     actionText: 'see_more'.tr,
-            //   ),
-            //   NowPlaying(controller: controller),
-            //   SectionSeparation(
-            //     separationText: 'popular'.tr,
-            //     actionText: 'see_more'.tr,
-            //   ),
-            //   PopularMovie(controller: controller),
-            //   // SectionSeparation(
-            //   //   separationText: 'trending'.tr,
-            //   //   actionText: 'see_more'.tr,
-            //   // ),
-            //   // Trending(controller: controller)
+            CarouselSection(controller: controller),
+            SectionSeparation(
+              separationText: 'trending'.tr,
+              actionText: 'show_all'.tr,
+            ),
+            Trending(controller: controller),
+            SectionSeparation(
+              separationText: 'now_showing'.tr,
+              actionText: 'show_all'.tr,
+            ),
+            NowPlaying(controller: controller),
+            // SectionSeparation(
+            //   separationText: 'popular'.tr,
+            //   actionText: 'show_all'.tr,
+            // ),
+            // PopularMovie(controller: controller),
           ],
         ),
       ),
@@ -108,6 +71,197 @@ class HomeView extends GetView<HomeController> {
   }
 }
 
+class CarouselSection extends StatelessWidget {
+  const CarouselSection({
+    super.key,
+    required this.controller,
+  });
+
+  final HomeController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() => controller.isLoading.value
+        ? Container(
+            height: 300.h,
+            foregroundDecoration: BoxDecoration(
+                gradient: LinearGradient(begin: AlignmentDirectional.center, end: AlignmentDirectional.bottomCenter, colors: [
+              Colors.transparent,
+              Theme.of(context).scaffoldBackgroundColor,
+            ], stops: const [
+              0.0,
+              0.8
+            ])),
+            child: const ShimmerLoading())
+        : SizedBox(
+            height: 300.h,
+            child: Stack(
+              children: [
+                CarouselSlider.builder(
+                  unlimitedMode: true,
+                  // autoSliderDelay: const Duration(seconds: 500),
+                  // autoSliderTransitionCurve: Curves.linear,
+                  // autoSliderTransitionTime: const Duration(seconds: 200),
+                  slideTransform: const AccordionTransform(),
+                  slideIndicator: CircularSlideIndicator(
+                      itemSpacing: 10,
+                      padding: EdgeInsets.only(bottom: 20.h),
+                      indicatorRadius: 3.r,
+                      indicatorBackgroundColor: Theme.of(context).colorScheme.secondary,
+                      currentIndicatorColor: Theme.of(context).colorScheme.primary),
+                  itemCount: controller.nowPlayingResponse.value.results!.length - 15,
+                  slideBuilder: (index) {
+                    controller.selectedIndex.value = index;
+                    return GestureDetector(
+                      onTap: () => controller.navigateToMovieDetails(index),
+                      child: Stack(
+                        children: [
+                          Container(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            foregroundDecoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: AlignmentDirectional.center,
+                                    end: AlignmentDirectional.bottomCenter,
+                                    colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor],
+                                    stops: const [0.0, 0.9])),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).backdropPath ?? controller.nowPlayingResponse.value.results!.elementAt(index).posterPath}',
+                              fit: BoxFit.fitHeight,
+                              width: double.maxFinite,
+                              height: 300.h,
+                              placeholder: (context, url) => SizedBox(
+                                height: 300.h,
+                                child: const ShimmerLoading(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 30,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      children: [
+                        // Card(
+                        //   elevation: 6,
+                        //   color: Theme.of(context).colorScheme.secondary,
+                        //   shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                        //   child: Container(
+                        //     padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 5),
+                        //     //color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+                        //     child: GradientText('coming_soon'.tr.toUpperCase(),style: Theme.of(context).textTheme.titleLarge!.copyWith(letterSpacing: 0.5)),
+                        //   ),
+                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                                child: Text('adventure'.tr,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(decoration: TextDecoration.underline, letterSpacing: 1.5))),
+                            Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                child: CircleAvatar(
+                                  radius: 3.r,
+                                )),
+                            GestureDetector(
+                                child: Text('family'.tr,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(decoration: TextDecoration.underline, letterSpacing: 1.5))),
+                            Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                child: CircleAvatar(
+                                  radius: 3.r,
+                                )),
+                            GestureDetector(
+                                child: Text('fantasy'.tr,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(decoration: TextDecoration.underline, letterSpacing: 1.5))),
+                          ],
+                        ),
+                        PrimaryButton(
+                          height: 20.h,
+                          controller: controller,
+                          text: 'more_info'.tr,
+                          textStyle: Theme.of(context).textTheme.bodyLarge,
+                          onTap: () => controller.navigateToMovieDetails(controller.selectedIndex.value),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )));
+  }
+}
+
+class Trending extends StatelessWidget {
+  const Trending({
+    super.key,
+    required this.controller,
+  });
+
+  final HomeController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() => controller.isLoading.value
+        ? SizedBox(
+            height: 150.h,
+            child: const TrendingLoader(),
+          )
+        : SizedBox(
+            height: 150.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.nowPlayingResponse.value.results!.length,
+              itemBuilder: (context, index) => SizedBox(
+                width: 90.w,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: CachedNetworkImage(
+                          height: 115.h,
+                          width: 90.w,
+                          imageUrl:
+                              '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).posterPath!}',
+                          placeholder: (context, url) => SizedBox(height: 115.h, width: 90.w, child: const ShimmerLoading()),
+                          errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                          imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                          fit: BoxFit.fitWidth,
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        controller.nowPlayingResponse.value.results!.elementAt(index).title!,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        maxLines: 2,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ));
+  }
+}
+
 class NowPlaying extends StatelessWidget {
   final HomeController controller;
 
@@ -115,62 +269,94 @@ class NowPlaying extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: Obx(
-        () => controller.isLoading.value
-            ? const NowPlayingLoader()
-            : ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.nowPlayingResponse.value.results!.length,
-                itemBuilder: (context, index) => GestureDetector(
-                  onTap: () => controller.navigateToMovieDetails(index),
-                  child: Container(
-                    width: 150,
-                    margin: const EdgeInsets.only(right: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          elevation: 5,
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: CachedNetworkImage(
-                                height: 220,
-                                fit: BoxFit.cover,
-                                imageUrl:
-                                    '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).posterPath!}',
-                                placeholder: (context, url) => SizedBox(
-                                  height: 220,
-                                  child: ShimmerLoading(),
-                                ),
-                              )),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          controller.nowPlayingResponse.value.results!.elementAt(index).title!.isEmpty
-                              ? controller.nowPlayingResponse.value.results!.elementAt(index).title!
-                              : controller.nowPlayingResponse.value.results!.elementAt(index).originalTitle!,
-                          style: Theme.of(context).textTheme.labelMedium,
-                          maxLines: 2,
-                          overflow: TextOverflow.fade,
-                        ),
-                        Text(
-                          '${'release_date'.tr} ${formatOnlyDate(controller.nowPlayingResponse.value.results!.elementAt(index).releaseDate!)}',
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(height: 2),
-                          maxLines: 2,
-                          overflow: TextOverflow.fade,
-                        ),
-                      ],
+    return Obx(() => controller.isLoading.value
+        ? SizedBox(height: 130.h, child: const NowPlayingLoader())
+        : SizedBox(
+            height: 130.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.nowPlayingResponse.value.results!.length,
+              itemBuilder: (context, index) => Container(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                width: 150.w,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: CachedNetworkImage(
+                            height: 75.h,
+                            width: 150.w,
+                            imageUrl:
+                                '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).backdropPath ?? controller.nowPlayingResponse.value.results!.elementAt(index).posterPath}',
+                            placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
+                            errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                            imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                            fit: BoxFit.cover,
+                          )),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.favorite,
+                                    color: Colors.redAccent,
+                                    size: 8.h,
+                                  ),
+                                  SizedBox(
+                                    width: 2.w,
+                                  ),
+                                  Text(
+                                    controller.nowPlayingResponse.value.results!.elementAt(index).popularity!.toString(),
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.fade,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.star_half,
+                                    color: Colors.amberAccent,
+                                    size: 8.h,
+                                  ),
+                                  SizedBox(
+                                    width: 2.w,
+                                  ),
+                                  Text(
+                                    controller.nowPlayingResponse.value.results!.elementAt(index).voteAverage!.toStringAsFixed(1),
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                    overflow: TextOverflow.fade,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Text(
+                            controller.nowPlayingResponse.value.results!.elementAt(index).title!,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            maxLines: 2,
+                            overflow: TextOverflow.fade,
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-      ),
-    );
+            ),
+          ));
   }
 }
 
@@ -297,73 +483,6 @@ class PopularMovie extends StatelessWidget {
                   ],
                 ),
               ),
-            )),
-    );
-  }
-}
-
-class Trending extends StatelessWidget {
-  const Trending({
-    super.key,
-    required this.controller,
-  });
-
-  final HomeController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 150,
-      child: Obx(() => controller.isLoading.value == false
-          ? ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.nowPlayingResponse.value.results!.length,
-              itemBuilder: (context, index) => Container(
-                width: 70,
-                margin: const EdgeInsets.only(right: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      elevation: 5,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).posterPath!}',
-                            placeholder: (context, url) => Shimmer.fromColors(
-                              baseColor: Colors.red,
-                              highlightColor: Colors.yellow,
-                              child: Text(
-                                'Shimmer',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 40.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Image.asset('assets/logo/logo.png'),
-                            imageBuilder: (context, imageProvider) => Image(image: imageProvider),
-                            fit: BoxFit.fitHeight,
-                            height: 90,
-                          )),
-                    ),
-                    Text(
-                      controller.nowPlayingResponse.value.results!.elementAt(index).title!,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : const Center(
-              child: CircularProgressIndicator(),
             )),
     );
   }

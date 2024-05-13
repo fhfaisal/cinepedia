@@ -1,4 +1,6 @@
+import 'package:cinepedia/app/utils/widgets/loader/shimmer_loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
 class NowPlayingLoader extends StatelessWidget {
   const NowPlayingLoader({
@@ -11,7 +13,7 @@ class NowPlayingLoader extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       itemCount: 10,
       itemBuilder: (context, index) => Container(
-        width: 150,
+        width: 150.h,
         margin: const EdgeInsets.only(right: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +30,7 @@ class NowPlayingLoader extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5),
                   child: SizedBox(
-                    height: 220,
+                    height: 75.h,
                     child: Shimmer.fromColors(
                       baseColor: Theme.of(context).colorScheme.errorContainer,
                       highlightColor: Theme.of(context).highlightColor,
@@ -44,19 +46,30 @@ class NowPlayingLoader extends StatelessWidget {
                   ),),
               ),
             ),
-            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Shimmer.fromColors(
+                    baseColor: Theme.of(context).colorScheme.errorContainer,
+                    highlightColor: Theme.of(context).highlightColor,
+                    direction: ShimmerDirection.ltr,
+                    child: SizedBox(height: 15.h,width: 60.w,child: const ShimmerLoading(),)
+                ),
+                Shimmer.fromColors(
+                    baseColor: Theme.of(context).colorScheme.errorContainer,
+                    highlightColor: Theme.of(context).highlightColor,
+                    direction: ShimmerDirection.ltr,
+                    child: SizedBox(height: 15.h,width: 60.w,child: const ShimmerLoading(),)
+                ),
+              ],
+            ),
             Shimmer.fromColors(
               baseColor: Theme.of(context).colorScheme.errorContainer,
               highlightColor: Theme.of(context).highlightColor,
               direction: ShimmerDirection.ltr,
-              child: Container(
-                height: 20,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.0),
-                  color: Colors.white,
-                ),
-              ),
+              child: SizedBox(height: 20.h,child: const ShimmerLoading(),)
             ),
+
           ],
         ),
       ),

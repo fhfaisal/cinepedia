@@ -9,6 +9,7 @@ class PrimaryButton extends StatelessWidget {
     required this.controller,
     required this.text,
     required this.onTap,
+    this.textStyle,
     this.height,
     this.width,
   });
@@ -18,6 +19,7 @@ class PrimaryButton extends StatelessWidget {
   final Callback onTap;
   final double? height;
   final double? width;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -32,23 +34,15 @@ class PrimaryButton extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  stops: [0.1, 1],
-                  colors: [AppColor.linear1, AppColor.linear2])),
+                  stops: const [0.1, 1],
+                  colors: [Theme.of(context).colorScheme.onPrimary,Theme.of(context).colorScheme.onSecondary])),
           child: Text(text,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: Colors.white,
-                // shadows: <Shadow>[
-                //   Shadow(
-                //     offset: Offset(0.0, 1.7),
-                //     blurRadius: 1.0,
-                //     color: Colors.black54,
-                //   ),
-                // ],
-              )),
+              style: textStyle??Theme.of(context).textTheme.titleMedium
+              ),
         ),
       ),
     );

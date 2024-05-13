@@ -16,7 +16,7 @@ class BottomNavigationBarView extends GetView<BottomNavigationBarController> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Theme.of(context).navigationBarTheme.backgroundColor,
-        selectedItemColor: Theme.of(context).colorScheme.secondary,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
         unselectedItemColor: Colors.white.withOpacity(.60),
         selectedFontSize: 14,
         unselectedFontSize: 14,

@@ -58,9 +58,9 @@ ThemeData darkMode = ThemeData.dark().copyWith(
   primaryColorDark: AppColor.primary,
   colorScheme: const ColorScheme.dark(
     primary: AppColor.primaryDark,
-    onPrimary: Color(0xFF381E72),
-    secondary: AppColor.primaryDark,
-    onSecondary: Colors.white,
+    onPrimary: AppColor.darkLinear1,
+    secondary: AppColor.secondaryDark,
+    onSecondary: AppColor.darkLinear2,
     error: AppColor.error,
     onError: Colors.red,
     background: AppColor.bgDark,

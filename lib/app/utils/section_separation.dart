@@ -1,3 +1,4 @@
+import 'package:cinepedia/app/utils/design_elements.dart';
 import 'package:flutter/material.dart';
 class SectionSeparation extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -15,34 +16,24 @@ class SectionSeparation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Divider(color: Theme.of(context).colorScheme.primary,height: 1,thickness: 1,),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 2),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-                child: Text(separationText??'',style: Theme.of(context).textTheme.labelSmall,))),
-            isAction?
-            Flexible(child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 2),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                    )
-                ),
-                child: GestureDetector(
-                    onTap: onPressed,child:Text(actionText!.toUpperCase()??'',style: Theme.of(context).textTheme.bodyLarge,))))
-            :const SizedBox()
-          ],
-        ),
-        Divider(color: Theme.of(context).colorScheme.primary,height: 1,thickness: 1,),
-      ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
+      child: Column(
+        children: [
+          //Divider(color: Theme.of(context).colorScheme.primary,height: 1,thickness: 1,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(separationText??'',style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold)),
+              isAction?
+              GestureDetector(
+                  onTap: onPressed,child:Text(actionText!??'',style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.primary)))
+              :const SizedBox()
+            ],
+          ),
+         // Divider(color: Theme.of(context).colorScheme.primary,height: 1,thickness: 1,),
+        ],
+      ),
     );
   }
 }
