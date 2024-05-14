@@ -21,7 +21,10 @@ class LanguageTranslations extends Translations {
       'categories':"Categories",
       'search':"Search",
       'search_empty_title':"Under Development",
-      'search_empty_message':"This page under the development phase"
+      'search_empty_message':"This page under the development phase",
+      ///Movie Details
+      'released':"Released",
+      'runtime':"Runtime",
 
 
     },

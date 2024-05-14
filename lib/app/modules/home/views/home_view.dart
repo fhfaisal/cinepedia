@@ -228,7 +228,8 @@ class Trending extends StatelessWidget {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: controller.nowPlayingResponse.value.results!.length,
-              itemBuilder: (context, index) => SizedBox(
+              itemBuilder: (context, index) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 width: 90.w,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,14 +246,11 @@ class Trending extends StatelessWidget {
                           imageBuilder: (context, imageProvider) => Image(image: imageProvider),
                           fit: BoxFit.fitWidth,
                         )),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        controller.nowPlayingResponse.value.results!.elementAt(index).title!,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        maxLines: 2,
-                        overflow: TextOverflow.fade,
-                      ),
+                    Text(
+                      controller.nowPlayingResponse.value.results!.elementAt(index).title!,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.fade,
                     ),
                   ],
                 ),
@@ -276,8 +274,8 @@ class NowPlaying extends StatelessWidget {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: controller.nowPlayingResponse.value.results!.length,
-              itemBuilder: (context, index) => Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
+              itemBuilder: (context, index) => SizedBox(
+                // color: Theme.of(context).scaffoldBackgroundColor,
                 width: 150.w,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

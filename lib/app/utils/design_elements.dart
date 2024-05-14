@@ -13,10 +13,15 @@ formatOnlyDate(DateTime? dateTime) {
   }
 
   try {
-    final format = DateFormat('yyyy-MM-dd', 'en_US');
+    final format = DateFormat('MMMyy', 'en_US');
     return format.format(dateTime);
   } catch (e) {
     return null; // Return null if there's an error during formatting
   }
+}
+String formatRuntime(int minutes) {
+  final int hours = minutes ~/ 60;
+  final int remainingMinutes = minutes % 60;
+  return hours > 0 ? '$hours${'h'} $remainingMinutes${'m'}' : '$remainingMinutes';
 }
 
