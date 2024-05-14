@@ -25,6 +25,12 @@ class LanguageTranslations extends Translations {
       ///Movie Details
       'released':"Released",
       'runtime':"Runtime",
+      'vote_average':"Rating",
+      'vote_count':"Total Vote",
+      'popularity':"People Loved",
+      'see_showtime':"See Showtime",
+      'and_tickets':"and tickets",
+      'add_to_my_list':"Add to My List",
 
 
     },

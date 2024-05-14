@@ -13,7 +13,7 @@ formatOnlyDate(DateTime? dateTime) {
   }
 
   try {
-    final format = DateFormat('MMMyy', 'en_US');
+    final format = DateFormat('MMM yy', 'en_US');
     return format.format(dateTime);
   } catch (e) {
     return null; // Return null if there's an error during formatting

@@ -1,12 +1,21 @@
+
 import 'package:cinepedia/app/data/movie_details.dart';
 import 'package:cinepedia/app/repository/home_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../utils/constants.dart';
 
-class MovieDetailsController extends GetxController {
+class MovieDetailsController extends GetxController with GetTickerProviderStateMixin {
   late int movieId; // Declare movieId variable
+  late TabController tabController;
+  final myTabs = [
+    Tab(text: 'Overview'),
+    Tab(text: 'Details'),
+    Tab(text: 'Reviews'),
+    Tab(text: 'Suggestions'),
+  ];
 
   final isLoading = false.obs;
   final Rx<MovieDetailsResponse> movieDetailsResponse = MovieDetailsResponse().obs;
@@ -14,11 +23,13 @@ class MovieDetailsController extends GetxController {
   @override
   void onInit() {
     initializeMovieId(); // Call initialization method onInit
+    tabController = TabController(vsync: this, length: myTabs.length);
     super.onInit();
   }
 
   @override
   void onReady() {
+    tabController = TabController(vsync: this, length: myTabs.length,initialIndex: 0);
     super.onReady();
   }
 

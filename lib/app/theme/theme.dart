@@ -67,7 +67,7 @@ ThemeData darkMode = ThemeData.dark().copyWith(
     onBackground: Colors.black,
     surface: AppColor.surface,
     onSurface: Colors.black,
-    errorContainer: AppColor.errorContainer
+    errorContainer: AppColor.errorContainer,
   ),
   scaffoldBackgroundColor: AppColor.surfaceDark,
   textTheme: textThemeDark,
