@@ -31,6 +31,10 @@ class LanguageTranslations extends Translations {
       'see_showtime':"See Showtime",
       'and_tickets':"and tickets",
       'add_to_my_list':"Add to My List",
+      'overview':"Overview",
+      'cast_and_crew':"Cast & Crew",
+      'storyline':"Storyline",
+      'images':"Images",
 
 
     },

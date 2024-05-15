@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinepedia/app/theme/colors.dart';
 import 'package:cinepedia/app/utils/buttons/primary_button.dart';
 import 'package:cinepedia/app/utils/imagePath/movieDetails.dart';
+import 'package:cinepedia/app/utils/section_separation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -19,41 +21,83 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: controller.myTabs.length,
-        child: Scaffold(
-          body: Obx(() => controller.isLoading.value
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : ListView(
-                  children: [
-                    imageSection(context),
-                    countingSection(context),
-                    separationGap(),
-                    ticketsSection(context),
-                    TabBar(
-                      controller: controller.tabController,
-                      isScrollable: true,
-                      unselectedLabelColor: Colors.green,
-                      tabAlignment: TabAlignment.center,
-                      tabs: controller.myTabs
-                    ),
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).height,
-                      child: TabBarView(
-                        controller: controller.tabController,
-                        children: [
-                          Flexible(child: Placeholder()),
-                          Icon(Icons.directions_transit, size: 350),
-                          Icon(Icons.directions_transit, size: 350),
-                          Icon(Icons.directions_transit, size: 350),
-                        ],
-                      ),
-                    )
-                  ],
-                )),
-        ));
+    return SafeArea(
+      child: DefaultTabController(
+          length: controller.myTabs.length,
+          child: Scaffold(
+            body: Obx(() => controller.isLoading.value
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : ListView(
+                    children: [
+                      imageSection(context),
+                      countingSection(context),
+                      separationGap(),
+                      ticketsSection(context),
+                      TabBar(
+                          controller: controller.tabController,
+                          isScrollable: true,
+                          unselectedLabelColor: AppColor.textGray,
+                          tabAlignment: TabAlignment.center,
+                          tabs: controller.myTabs),
+                      SizedBox(
+                        height: MediaQuery.sizeOf(context).height/1.2,
+                        child: TabBarView(
+                          controller: controller.tabController,
+                          children: [
+                            TabOverView(controller: controller),
+                            Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('storyline'.tr,
+                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+                                  Text(
+                                    controller.movieDetailsResponse.value.overview!,
+                                    style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
+                                    textAlign: TextAlign.justify,
+                                  ),
+                                  separationGap(),
+                                  Text('images'.tr,
+                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+                                  SizedBox(
+                                    height: 120,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: 10,
+                                        itemBuilder: (context, index) => Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(5),
+                                              child: CachedNetworkImage(
+                                                height: 75.h,
+                                                width: 150.w,
+                                                imageUrl:
+                                                '${Constants.posterUrl}/ufAynWZolcl5wM22pZfqWJm8YK1.jpg',
+                                                placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
+                                                errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                                                imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                                                fit: BoxFit.cover,
+                                              )),
+                                        ),),
+                                  )
+
+                                ],
+                              ),
+                            ),
+                            Icon(Icons.directions_transit, size: 350),
+                            Icon(Icons.directions_transit, size: 350),
+                          ],
+                        ),
+                      )
+                    ],
+                  )),
+          )),
+    );
   }
 
   SizedBox ticketsSection(BuildContext context) {
@@ -260,6 +304,92 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
           ),
         )
       ],
+    );
+  }
+}
+
+class TabOverView extends StatelessWidget {
+  const TabOverView({
+    super.key,
+    required this.controller,
+  });
+
+  final MovieDetailsController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('overview'.tr,
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            controller.movieDetailsResponse.value.overview!,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
+            textAlign: TextAlign.justify,
+          ),
+          separationGap(),
+          Row(
+            children: List.generate(
+                controller.movieDetailsResponse.value.genres!.length,
+                (index) => Row(
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: CircleAvatar(
+                              radius: 3.r,
+                            )),
+                        Text(
+                          controller.movieDetailsResponse.value.genres!.elementAt(index).name!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: AppColor.textGray, letterSpacing: 1),
+                        ),
+                        index == controller.movieDetailsResponse.value.genres!.length - 1
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                child: CircleAvatar(
+                                  radius: 3.r,
+                                ))
+                            : const SizedBox(),
+                      ],
+                    )),
+          ),
+          separationGap(),
+          separationGap(),
+          SectionSeparation(separationText: 'cast_and_crew'.tr, actionText: 'show_all'.tr),
+          SizedBox(
+            height: 125.h,
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: 10,
+              scrollDirection: Axis.horizontal,
+              separatorBuilder: (context, index) => const SizedBox(width: 10),
+              itemBuilder: (context, index) => Column(
+                children: [
+                  Container(
+                    height: 100.h,
+                    width: 100,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black.withOpacity(0.1),
+                        image: const DecorationImage(
+                          image: NetworkImage('${Constants.posterUrl}/tgCkGE0LIggyjMmgSwHhpZAkfJs.jpg'),
+                          fit: BoxFit.cover,
+                        )),
+                  ),
+                  Text('Noa',style: Theme.of(context).textTheme.labelMedium,),
+                  Text('Eddie Redmayne',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

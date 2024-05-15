@@ -11,6 +11,7 @@ class AppColor{
   static const Color primaryDark = Color(0xFFF3B700);
   // static const Color secondary = Color(0xFF625B71);
   static const Color secondaryDark = Color(0xFFFEF7FF);
+  static const Color textGray = Color(0xFFAFAFAF);
   static const Color bgLight = Color(0xFF540BA1);
   static const Color bgDark = Color(0xFF242A32);
   static const Color error = Color(0xFFB3261E);

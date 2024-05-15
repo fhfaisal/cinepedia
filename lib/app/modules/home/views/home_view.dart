@@ -25,29 +25,31 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _homeAppbar(context),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CarouselSection(controller: controller),
-            SectionSeparation(
-              separationText: 'trending'.tr,
-              actionText: 'show_all'.tr,
-            ),
-            Trending(controller: controller),
-            SectionSeparation(
-              separationText: 'now_showing'.tr,
-              actionText: 'show_all'.tr,
-            ),
-            NowPlaying(controller: controller),
-            // SectionSeparation(
-            //   separationText: 'popular'.tr,
-            //   actionText: 'show_all'.tr,
-            // ),
-            // PopularMovie(controller: controller),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        //appBar: _homeAppbar(context),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CarouselSection(controller: controller),
+              SectionSeparation(
+                separationText: 'trending'.tr,
+                actionText: 'show_all'.tr,
+              ),
+              Trending(controller: controller),
+              SectionSeparation(
+                separationText: 'now_showing'.tr,
+                actionText: 'show_all'.tr,
+              ),
+              NowPlaying(controller: controller),
+              // SectionSeparation(
+              //   separationText: 'popular'.tr,
+              //   actionText: 'show_all'.tr,
+              // ),
+              // PopularMovie(controller: controller),
+            ],
+          ),
         ),
       ),
     );
