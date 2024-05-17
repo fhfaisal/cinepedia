@@ -21,46 +21,45 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return Obx(() => controller.isLoading.value?
+        const Center(child: CircularProgressIndicator(),)
+    :SafeArea(
       child: DefaultTabController(
-          length: controller.myTabs.length,
-          child: Scaffold(
-            body: Obx(() => controller.isLoading.value
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : ListView(
+        length: controller.myTabs.length,
+        child: Scaffold(
+            body: ListView(
+              children: [
+                imageSection(context),
+                countingSection(context),
+                separationGap(),
+                ticketsSection(context),
+                TabBar(
+                    controller: controller.tabController,
+                    isScrollable: true,
+                    unselectedLabelColor: AppColor.textGray,
+                    tabAlignment: TabAlignment.center,
+                    tabs: controller.myTabs),
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height/1.8,
+                  child: TabBarView(
+                    controller: controller.tabController,
                     children: [
-                      imageSection(context),
-                      countingSection(context),
-                      separationGap(),
-                      ticketsSection(context),
-                      TabBar(
-                          controller: controller.tabController,
-                          isScrollable: true,
-                          unselectedLabelColor: AppColor.textGray,
-                          tabAlignment: TabAlignment.center,
-                          tabs: controller.myTabs),
-                      SizedBox(
-                        height: MediaQuery.sizeOf(context).height/1.8,
-                        child: TabBarView(
-                          controller: controller.tabController,
-                          children: [
-                            TabOverView(controller: controller),
-                            TabDetails(controller: controller),
-                            TabReviews(controller: controller),
-                            TabSuggestions(controller: controller)
-                          ],
-                        ),
-                      )
+                      TabOverView(controller: controller),
+                      TabDetails(controller: controller),
+                      TabReviews(controller: controller),
+                      TabSuggestions(controller: controller)
                     ],
-                  )),
-          )),
-    );
+                  ),
+                )
+              ],
+            )),
+      ),
+    ));
   }
 
-  SizedBox ticketsSection(BuildContext context) {
-    return SizedBox(
+  Container ticketsSection(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       height: 44.h,
       child: Row(
         children: [
@@ -276,98 +275,145 @@ class TabSuggestions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        separationGap(),
-        Text('Related Movies'.tr,style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
-        SizedBox(
-          height: 130.h,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: controller.similarResponse.value.results!.length,
-            itemBuilder: (context, index) => SizedBox(
-              // color: Theme.of(context).scaffoldBackgroundColor,
-              width: 150.w,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: CachedNetworkImage(
-                          height: 75.h,
-                          width: 150.w,
-                          imageUrl:
-                          '${Constants.posterUrl}${controller.similarResponse.value.results!.elementAt(index).backdropPath??controller.similarResponse.value.results!.elementAt(index).posterPath}',
-                          placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
-                          errorWidget: (context, url, error) => const Icon(Icons.error_outline),
-                          imageBuilder: (context, imageProvider) => Image(image: imageProvider),
-                          fit: BoxFit.cover,
-                        )),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          separationGap(),
+          Text('suggestions'.tr,style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          SizedBox(
+            height: 130.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.similarResponse.value.results!.length,
+              itemBuilder: (context, index) => GestureDetector(
+                onTap: () => controller.navigateToMovieDetails(index),
+                child: SizedBox(
+                  // color: Theme.of(context).scaffoldBackgroundColor,
+                  width: 150.w,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: CachedNetworkImage(
+                              height: 75.h,
+                              width: 150.w,
+                              imageUrl:
+                              '${Constants.posterUrl}${controller.similarResponse.value.results!.elementAt(index).backdropPath??controller.similarResponse.value.results!.elementAt(index).posterPath}',
+                              placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
+                              errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                              imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                              fit: BoxFit.cover,
+                            )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Icon(
-                                  Icons.favorite,
-                                  color: Colors.redAccent,
-                                  size: 8.h,
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.favorite,
+                                      color: Colors.redAccent,
+                                      size: 8.h,
+                                    ),
+                                    SizedBox(
+                                      width: 2.w,
+                                    ),
+                                    Text(
+                                      controller.similarResponse.value.results!.elementAt(index).popularity!.toString(),
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  width: 2.w,
-                                ),
-                                Text(
-                                  controller.similarResponse.value.results!.elementAt(index).popularity!.toString(),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.fade,
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star_half,
+                                      color: Colors.amberAccent,
+                                      size: 8.h,
+                                    ),
+                                    SizedBox(
+                                      width: 2.w,
+                                    ),
+                                    Text(
+                                      controller.similarResponse.value.results!.elementAt(index).voteAverage!.toStringAsFixed(1),
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.star_half,
-                                  color: Colors.amberAccent,
-                                  size: 8.h,
-                                ),
-                                SizedBox(
-                                  width: 2.w,
-                                ),
-                                Text(
-                                  controller.similarResponse.value.results!.elementAt(index).voteAverage!.toStringAsFixed(1),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                  overflow: TextOverflow.fade,
-                                ),
-                              ],
+                            Text(
+                              controller.similarResponse.value.results!.elementAt(index).title!,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              maxLines: 2,
+                              overflow: TextOverflow.fade,
                             ),
+
                           ],
                         ),
-                        Text(
-                          controller.similarResponse.value.results!.elementAt(index).title!,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          maxLines: 2,
-                          overflow: TextOverflow.fade,
-                        ),
-
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+          Text('recommendations'.tr,style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          SizedBox(
+            height: 150.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.recommendationsResponse.value.results!.length,
+              itemBuilder: (context, index) => GestureDetector(
+                onTap: () {
+                  print(controller.recommendationsResponse.value.results!.elementAt(index).id);
+                  controller.navigateToMovieDetails(index);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  width: 90.w,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: CachedNetworkImage(
+                            height: 115.h,
+                            width: 90.w,
+                            imageUrl:
+                            '${Constants.posterUrl}${controller.recommendationsResponse.value.results!.elementAt(index).posterPath}',
+                            placeholder: (context, url) => SizedBox(height: 115.h, width: 90.w, child: const ShimmerLoading()),
+                            errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                            imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                            fit: BoxFit.fitWidth,
+                          )),
+                      Text(
+                        controller.recommendationsResponse.value.results!.elementAt(index).title!,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        maxLines: 2,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -483,7 +529,7 @@ class TabReviews extends StatelessWidget {
                                 const SizedBox():const Icon(Icons.error),
                               ),
                             ),
-                            Text(controller.reviewsResponse.value.results!.elementAt(index).author!,style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
+                            Text(controller.reviewsResponse.value.results!.elementAt(index).author.toString(),style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
                             const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8.0),
                               child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
@@ -528,7 +574,7 @@ class TabReviews extends StatelessWidget {
                   Expanded(
                       flex: 3,
                       child: Text(
-                        'add_to_my_list'.tr,
+                        'add_to_my_review'.tr,
                         style: Theme.of(context).textTheme.titleSmall,textAlign: TextAlign.center,
                       )),
                   const Expanded(child: Icon(Icons.arrow_drop_down)),

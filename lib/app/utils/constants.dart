@@ -12,6 +12,7 @@ class Constants{
   static const String images="/images";
   static const String reviews="/reviews";
   static const String similar="/similar";
+  static const String recommendations="/recommendations";
   ///
   static const String posterUrl="https://image.tmdb.org/t/p/original";
   static const String logInEmail="login";

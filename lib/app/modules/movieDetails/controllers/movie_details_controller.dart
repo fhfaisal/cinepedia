@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../routes/app_pages.dart';
 import '../../../utils/constants.dart';
 
 class MovieDetailsController extends GetxController with GetTickerProviderStateMixin {
@@ -28,6 +29,7 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
   final Rx<ImagesResponse> imageResponse = ImagesResponse().obs;
   final Rx<ReviewsResponse> reviewsResponse = ReviewsResponse().obs;
   final Rx<SimilarResponse> similarResponse = SimilarResponse().obs;
+  final Rx<SimilarResponse> recommendationsResponse = SimilarResponse().obs;
 
   @override
   void onInit() {
@@ -37,6 +39,7 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
     fetchImages();
     fetchReviews();
     fetchSimilar();
+    fetchRecommendations();
     super.onInit();
   }
 
@@ -109,5 +112,17 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
         similarResponse.value=response;
       }
     });
+  }
+  Future<void> fetchRecommendations()async {
+    isLoading.value==true;
+    await recommendationsResponseApi(movieId).then((response){
+      if(response !=null){
+        recommendationsResponse.value=response;
+      }
+    });
+  }
+
+  navigateToMovieDetails(index){
+    Get.toNamed(Routes.MOVIE_DETAILS,arguments: recommendationsResponse.value.results!.elementAt(index).id);
   }
 }

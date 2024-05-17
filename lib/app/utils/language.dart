@@ -37,6 +37,9 @@ class LanguageTranslations extends Translations {
       'images':"Images",
       'reviews':"Reviews",
       'top_review':"Top Review",
+      'add_to_my_review':"Add to My Review",
+      'suggestions':"Suggestions",
+      'recommendations':"Recommendations",
 
 
     },
