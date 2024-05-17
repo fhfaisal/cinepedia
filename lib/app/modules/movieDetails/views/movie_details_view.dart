@@ -557,7 +557,7 @@ class TabDetails extends StatelessWidget {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
-              itemCount: 10,
+              itemCount: controller.imageResponse.value.backdrops!.length,
                 itemBuilder: (context, index) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ClipRRect(
@@ -566,7 +566,7 @@ class TabDetails extends StatelessWidget {
                         height: 75.h,
                         width: 150.w,
                         imageUrl:
-                        '${Constants.posterUrl}/ufAynWZolcl5wM22pZfqWJm8YK1.jpg',
+                        '${Constants.posterUrl}${controller.imageResponse.value.backdrops!.elementAt(index).filePath}',
                         placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
                         errorWidget: (context, url, error) => const Icon(Icons.error_outline),
                         imageBuilder: (context, imageProvider) => Image(image: imageProvider),
@@ -634,32 +634,56 @@ class TabOverView extends StatelessWidget {
           separationGap(),
           separationGap(),
           SectionSeparation(separationText: 'cast_and_crew'.tr, actionText: 'show_all'.tr),
-          SizedBox(
+          Obx(() => controller.isLoading.value?
+              const Center(child: CircularProgressIndicator(),)
+              :SizedBox(
             height: 125.h,
             child: ListView.separated(
               shrinkWrap: true,
-              itemCount: 10,
+              itemCount: controller.creditsResponse.value.cast!.length,
               scrollDirection: Axis.horizontal,
               separatorBuilder: (context, index) => const SizedBox(width: 10),
               itemBuilder: (context, index) => Column(
                 children: [
-                  Container(
-                    height: 100.h,
-                    width: 100,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black.withOpacity(0.1),
-                        image: const DecorationImage(
-                          image: NetworkImage('${Constants.posterUrl}/tgCkGE0LIggyjMmgSwHhpZAkfJs.jpg'),
-                          fit: BoxFit.cover,
-                        )),
+                  // Container(
+                  //   height: 100.h,
+                  //   width: 100,
+                  //   padding: const EdgeInsets.all(10),
+                  //   decoration: BoxDecoration(
+                  //       shape: BoxShape.circle,
+                  //       color: Colors.black.withOpacity(0.1),
+                  //       image: DecorationImage(
+                  //         image: NetworkImage('${Constants.posterUrl}${controller.creditsResponse.value.cast!.elementAt(index).profilePath}'),
+                  //         fit: BoxFit.cover,
+                  //       )),
+                  // ),
+                  // Container(
+                  //   padding: const EdgeInsets.all(8.0),
+                  //   child: ClipRRect(
+                  //       borderRadius: BorderRadius.circular(50),
+                  //       child: CachedNetworkImage(
+                  //         height: 75.h,
+                  //         width: 75.w,
+                  //        imageUrl: '',
+                  //        // imageUrl: '${Constants.posterUrl}${controller.creditsResponse.value.cast!.elementAt(index).profilePath}',
+                  //         placeholder: (context, url) => SizedBox(height: 75.h, width: 75.w, child: const ShimmerLoading()),
+                  //         errorWidget: (context, url, error) => SizedBox(height: 75.h, width: 75.w, child: const ShimmerLoading()),
+                  //         imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                  //         fit: BoxFit.cover,
+                  //       )),
+                  // ),
+                  CircleAvatar(
+                    radius: 50.r,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    backgroundImage: CachedNetworkImageProvider('${Constants.posterUrl}${controller.creditsResponse.value.cast!.elementAt(index).profilePath}'),
+                    child: controller.creditsResponse.value.cast!.elementAt(index).profilePath!=null?const SizedBox():const Icon(Icons.error,size: 50,),
                   ),
-                  Text('Noa',style: Theme.of(context).textTheme.labelMedium,),
-                  Text('Eddie Redmayne',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
+                  Text(controller.creditsResponse.value.cast!.elementAt(index).character!,style: Theme.of(context).textTheme.labelMedium,),
+                  Text(controller.creditsResponse.value.cast!.elementAt(index).originalName!,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
                 ],
               ),
             ),
+          )
           )
         ],
       ),

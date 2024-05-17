@@ -23,7 +23,7 @@ Future<NowPlayingResponse?> nowPlayingResponseApi(Map<String, dynamic> values) a
   "POST, GET, OPTIONS, PUT, DELETE, HEAD";
   try {
     final response = await dioClient.get('$nowPlaying?',queryParameters: {'api_key':Constants.apiKey});
-    debugPrint(response.data.toString());
+    // debugPrint(response.data.toString());
     if(response.statusCode == 200){
       return NowPlayingResponse.fromJson(response.data);
     }else{
@@ -53,7 +53,7 @@ Future<PopularResponse?> popularResponseApi(Map<String, dynamic> values) async {
   "POST, GET, OPTIONS, PUT, DELETE, HEAD";
   try {
     final response = await dioClient.get('$popular?',queryParameters: {'api_key':Constants.apiKey});
-    debugPrint(response.data.toString());
+    // debugPrint(response.data.toString());
     if(response.statusCode == 200){
       return PopularResponse.fromJson(response.data);
     }else{
@@ -83,7 +83,7 @@ Future<MovieDetailsResponse?> movieDetailsResponseApi(int id) async {
   "POST, GET, OPTIONS, PUT, DELETE, HEAD";
   try {
     final response = await dioClient.get('$movieDetails?',queryParameters: {'api_key':Constants.apiKey});
-    debugPrint(response.data.toString());
+    // debugPrint(response.data.toString());
     if(response.statusCode == 200){
       return MovieDetailsResponse.fromJson(response.data);
     }else{

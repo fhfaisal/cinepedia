@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:cinepedia/app/data/now_playing.dart';
-import 'package:cinepedia/app/repository/home_repository.dart';
+import 'package:cinepedia/app/repository/home.dart';
 import 'package:cinepedia/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

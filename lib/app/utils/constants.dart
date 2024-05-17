@@ -7,6 +7,8 @@ class Constants{
   static const String nowPlying="movie/now_playing";
   static const String moviePopular="movie/movie/popular";
   static const String movieDetails="movie/";
+  static const String credits="/credits";
+  static const String images="/images";
   static const String posterUrl="https://image.tmdb.org/t/p/original/";
   static const String logInEmail="login";
   static const String signUp="register";
