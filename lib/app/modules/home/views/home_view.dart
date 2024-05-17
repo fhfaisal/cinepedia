@@ -55,22 +55,22 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  AppBar _homeAppbar(BuildContext context) {
-    return AppBar(
-      systemOverlayStyle: Get.isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-      title: Text(
-        'app_name'.tr,
-        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.white),
-      ),
-      actions: [
-        IconButton(
-            onPressed: () => Get.changeTheme(
-                  Get.isDarkMode ? lightMode : darkMode,
-                ),
-            icon: Icon(Get.isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined))
-      ],
-    );
-  }
+  // AppBar _homeAppbar(BuildContext context) {
+  //   return AppBar(
+  //     systemOverlayStyle: Get.isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+  //     title: Text(
+  //       'app_name'.tr,
+  //       style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.white),
+  //     ),
+  //     actions: [
+  //       IconButton(
+  //           onPressed: () => Get.changeTheme(
+  //                 Get.isDarkMode ? lightMode : darkMode,
+  //               ),
+  //           icon: Icon(Get.isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined))
+  //     ],
+  //   );
+  // }
 }
 
 class CarouselSection extends StatelessWidget {

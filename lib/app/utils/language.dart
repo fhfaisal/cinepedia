@@ -35,6 +35,8 @@ class LanguageTranslations extends Translations {
       'cast_and_crew':"Cast & Crew",
       'storyline':"Storyline",
       'images':"Images",
+      'reviews':"Reviews",
+      'top_review':"Top Review",
 
 
     },

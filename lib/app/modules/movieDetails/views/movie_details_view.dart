@@ -42,55 +42,14 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
                           tabAlignment: TabAlignment.center,
                           tabs: controller.myTabs),
                       SizedBox(
-                        height: MediaQuery.sizeOf(context).height/1.2,
+                        height: MediaQuery.sizeOf(context).height/1.8,
                         child: TabBarView(
                           controller: controller.tabController,
                           children: [
                             TabOverView(controller: controller),
-                            Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('storyline'.tr,
-                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
-                                  Text(
-                                    controller.movieDetailsResponse.value.overview!,
-                                    style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
-                                    textAlign: TextAlign.justify,
-                                  ),
-                                  separationGap(),
-                                  Text('images'.tr,
-                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
-                                  SizedBox(
-                                    height: 120,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: 10,
-                                        itemBuilder: (context, index) => Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(5),
-                                              child: CachedNetworkImage(
-                                                height: 75.h,
-                                                width: 150.w,
-                                                imageUrl:
-                                                '${Constants.posterUrl}/ufAynWZolcl5wM22pZfqWJm8YK1.jpg',
-                                                placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
-                                                errorWidget: (context, url, error) => const Icon(Icons.error_outline),
-                                                imageBuilder: (context, imageProvider) => Image(image: imageProvider),
-                                                fit: BoxFit.cover,
-                                              )),
-                                        ),),
-                                  )
-
-                                ],
-                              ),
-                            ),
-                            Icon(Icons.directions_transit, size: 350),
-                            Icon(Icons.directions_transit, size: 350),
+                            TabDetails(controller: controller),
+                            const TabReviews(),
+                          const TabSuggestions()
                           ],
                         ),
                       )
@@ -304,6 +263,320 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
           ),
         )
       ],
+    );
+  }
+}
+
+class TabSuggestions extends StatelessWidget {
+  const TabSuggestions({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        separationGap(),
+        Text('Related Movies'.tr,style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+        SizedBox(
+          height: 130.h,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 10,
+            itemBuilder: (context, index) => SizedBox(
+              // color: Theme.of(context).scaffoldBackgroundColor,
+              width: 150.w,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: CachedNetworkImage(
+                          height: 75.h,
+                          width: 150.w,
+                          imageUrl:
+                          '${Constants.posterUrl}${'/fypydCipcWDKDTTCoPucBsdGYXW.jpg'}',
+                          placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
+                          errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                          imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                          fit: BoxFit.cover,
+                        )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.favorite,
+                                  color: Colors.redAccent,
+                                  size: 8.h,
+                                ),
+                                SizedBox(
+                                  width: 2.w,
+                                ),
+                                Text(
+                                  'Popularity',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star_half,
+                                  color: Colors.amberAccent,
+                                  size: 8.h,
+                                ),
+                                SizedBox(
+                                  width: 2.w,
+                                ),
+                                Text(
+                                  'Rating',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Text(
+                          'Title',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          maxLines: 2,
+                          overflow: TextOverflow.fade,
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class TabReviews extends StatelessWidget {
+  const TabReviews({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('reviews'.tr,style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 5),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      stops: const [0.1, 1],
+                      colors: [Theme.of(context).colorScheme.onPrimary.withOpacity(1),Theme.of(context).colorScheme.onSecondary.withOpacity(1)])),
+              child: Text('top_review'.tr,style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold))),
+          separationGap(),
+          Expanded(
+            child: SizedBox(
+              height: MediaQuery.sizeOf(context).height,
+              child: ListView.separated(
+                itemCount: 20,
+                shrinkWrap: true,
+                separatorBuilder: (context, index) => const SizedBox(height: 10),
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () {
+                    Get.bottomSheet(
+                      // isScrollControlled: true,
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(right: 8.0),
+                                        child: CircleAvatar(radius: 15,child: FlutterLogo(),),
+                                      ),
+                                      Text('username',style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                        child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.only(right: 3.0),
+                                        child: Icon(Icons.star,size: 15,color: Colors.yellow),
+                                      ),
+                                      Text('6/10',style: Theme.of(context).textTheme.labelMedium,
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                    ],
+                                  ),
+
+                                  Text('April 15',style: Theme.of(context).textTheme.labelMedium,),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text('jahjcbhjakdfhjdskgbhkdbhgkbdskbgdbkgbdskbiwhheugheuhgudhjkbkgbdskgbsdkjhgbhjksdbgkhsdbgksdbgksdbgkbsdkgbsdkgbsdkgbsdkgbskgbsdkgbksdbgksdbgksdbgsgkbsdkjgbsdkjgbsdkjbgskdbgdskjbgsdkbgksjdbgkjsdbgksdbgkjsdbgowjgbweoghwoghwoggwougwoghghwanosngoiwehjgoiwehgownhgoibhafuihguiahfnbjvndfjbuerhguihrejgnjernhgurehguherghjenudhbuhufhuierhjghweughweuhguewhguwehguwehguwehgwehgowehgouiwehgwoeghweoghowehgouwehgouewhoguewhgouwehgowehgoweStill lacking a certain magic, the newest Fantastic Beasts is a step back in the right direction',
+                                    style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColor.textGray))
+                                ],
+                              )
+                            ],
+                          ),
+                        )
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 22,vertical: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 8.0),
+                                  child: CircleAvatar(radius: 15,child: FlutterLogo(),),
+                                ),
+                                Text('username',style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 3.0),
+                                  child: Icon(Icons.star,size: 15,color: Colors.yellow),
+                                ),
+                                Text('6/10',style: Theme.of(context).textTheme.labelMedium,
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ],
+                            ),
+
+                            Text('April 15',style: Theme.of(context).textTheme.labelMedium,),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text('jahjcbhjakdfhjibhafuihguiahfnbjvndfjbuerhguihrejgnjernhgurehguherghjenudhbuhufhuierhjghweughweuhguewhguwehguwehguwehgwehgowehgouiwehgwoeghweoghowehgouwehgouewhoguewhgouwehgowehgoweStill lacking a certain magic, the newest Fantastic Beasts is a step back in the right direction',
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColor.textGray),maxLines: 4,overflow: TextOverflow.ellipsis,)
+                          ],
+                        )
+                      ],
+                    )
+                  ),
+                ),),
+            ),
+          ),
+          Container(
+              height: 44.h,
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      stops: const [0.1, 1],
+                      colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.onSecondary])),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Expanded(child: Icon(Icons.add)),
+                  Expanded(
+                      flex: 3,
+                      child: Text(
+                        'add_to_my_list'.tr,
+                        style: Theme.of(context).textTheme.titleSmall,textAlign: TextAlign.center,
+                      )),
+                  const Expanded(child: Icon(Icons.arrow_drop_down)),
+                ],
+              )),
+
+        ],
+      ),
+    );
+  }
+}
+
+class TabDetails extends StatelessWidget {
+  const TabDetails({
+    super.key,
+    required this.controller,
+  });
+
+  final MovieDetailsController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('storyline'.tr,
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            controller.movieDetailsResponse.value.overview!,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
+            textAlign: TextAlign.justify,
+          ),
+          separationGap(),
+          Text('images'.tr,
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: 10,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: CachedNetworkImage(
+                        height: 75.h,
+                        width: 150.w,
+                        imageUrl:
+                        '${Constants.posterUrl}/ufAynWZolcl5wM22pZfqWJm8YK1.jpg',
+                        placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
+                        errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                        imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                        fit: BoxFit.cover,
+                      )),
+                ),),
+          )
+
+        ],
+      ),
     );
   }
 }
