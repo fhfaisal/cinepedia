@@ -48,8 +48,8 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
                           children: [
                             TabOverView(controller: controller),
                             TabDetails(controller: controller),
-                            TabReviews(controller: controller,),
-                          const TabSuggestions()
+                            TabReviews(controller: controller),
+                            TabSuggestions(controller: controller)
                           ],
                         ),
                       )
@@ -270,7 +270,9 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
 class TabSuggestions extends StatelessWidget {
   const TabSuggestions({
     super.key,
+    required this.controller
   });
+  final MovieDetailsController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -283,7 +285,7 @@ class TabSuggestions extends StatelessWidget {
           height: 130.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 10,
+            itemCount: controller.similarResponse.value.results!.length,
             itemBuilder: (context, index) => SizedBox(
               // color: Theme.of(context).scaffoldBackgroundColor,
               width: 150.w,
@@ -298,7 +300,7 @@ class TabSuggestions extends StatelessWidget {
                           height: 75.h,
                           width: 150.w,
                           imageUrl:
-                          '${Constants.posterUrl}${'/fypydCipcWDKDTTCoPucBsdGYXW.jpg'}',
+                          '${Constants.posterUrl}${controller.similarResponse.value.results!.elementAt(index).backdropPath??controller.similarResponse.value.results!.elementAt(index).posterPath}',
                           placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
                           errorWidget: (context, url, error) => const Icon(Icons.error_outline),
                           imageBuilder: (context, imageProvider) => Image(image: imageProvider),
@@ -324,7 +326,7 @@ class TabSuggestions extends StatelessWidget {
                                   width: 2.w,
                                 ),
                                 Text(
-                                  'Popularity',
+                                  controller.similarResponse.value.results!.elementAt(index).popularity!.toString(),
                                   style: Theme.of(context).textTheme.bodySmall,
                                   maxLines: 2,
                                   overflow: TextOverflow.fade,
@@ -342,7 +344,7 @@ class TabSuggestions extends StatelessWidget {
                                   width: 2.w,
                                 ),
                                 Text(
-                                  'Rating',
+                                  controller.similarResponse.value.results!.elementAt(index).voteAverage!.toStringAsFixed(1),
                                   style: Theme.of(context).textTheme.bodySmall,
                                   overflow: TextOverflow.fade,
                                 ),
@@ -351,7 +353,7 @@ class TabSuggestions extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          'Title',
+                          controller.similarResponse.value.results!.elementAt(index).title!,
                           style: Theme.of(context).textTheme.bodyMedium,
                           maxLines: 2,
                           overflow: TextOverflow.fade,
@@ -470,35 +472,29 @@ class TabReviews extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: CircleAvatar(
-                                      radius: 15,
-                                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                                      child: controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath!=null?
-                                      const SizedBox():const Icon(Icons.error)
-                                  ),
-                                ),
-                                Text(controller.reviewsResponse.value.results!.elementAt(index).author!,style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(right: 3.0),
-                                  child: Icon(Icons.star,size: 15,color: Colors.yellow),
-                                ),
-                                Text(controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!.toStringAsFixed(1),style: Theme.of(context).textTheme.labelMedium,
-                                  overflow: TextOverflow.fade,
-                                ),
-                              ],
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                backgroundImage: CachedNetworkImageProvider('${Constants.posterUrl}${controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath}'),
+                                child: controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath!=null?
+                                const SizedBox():const Icon(Icons.error),
+                              ),
                             ),
-
-                            Text(formatOnlyDate(controller.reviewsResponse.value.results!.elementAt(index).createdAt!),style: Theme.of(context).textTheme.labelMedium,),
+                            Text(controller.reviewsResponse.value.results!.elementAt(index).author!,style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.0),
+                              child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(right: 3.0),
+                              child: Icon(Icons.star,size: 15,color: Colors.yellow),
+                            ),
+                            Text(controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!.toStringAsFixed(1),style: Theme.of(context).textTheme.labelMedium,
+                              overflow: TextOverflow.fade,
+                            ),
                           ],
                         ),
                         separationGap(),

@@ -3,6 +3,7 @@ import 'package:cinepedia/app/data/cradits.dart';
 import 'package:cinepedia/app/data/image.dart';
 import 'package:cinepedia/app/data/movie_details.dart';
 import 'package:cinepedia/app/data/reviews.dart';
+import 'package:cinepedia/app/data/similar.dart';
 import 'package:cinepedia/app/repository/home.dart';
 import 'package:cinepedia/app/repository/movie_details.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,6 +27,7 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
   final Rx<CreditsResponse> creditsResponse = CreditsResponse().obs;
   final Rx<ImagesResponse> imageResponse = ImagesResponse().obs;
   final Rx<ReviewsResponse> reviewsResponse = ReviewsResponse().obs;
+  final Rx<SimilarResponse> similarResponse = SimilarResponse().obs;
 
   @override
   void onInit() {
@@ -34,6 +36,7 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
     fetchCredits();
     fetchImages();
     fetchReviews();
+    fetchSimilar();
     super.onInit();
   }
 
@@ -96,6 +99,14 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
     await reviewsResponseApi(movieId).then((response){
       if(response !=null){
         reviewsResponse.value=response;
+      }
+    });
+  }
+  Future<void> fetchSimilar()async {
+    isLoading.value==true;
+    await similarResponseApi(movieId).then((response){
+      if(response !=null){
+        similarResponse.value=response;
       }
     });
   }
