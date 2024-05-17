@@ -48,7 +48,7 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
                           children: [
                             TabOverView(controller: controller),
                             TabDetails(controller: controller),
-                            const TabReviews(),
+                            TabReviews(controller: controller,),
                           const TabSuggestions()
                           ],
                         ),
@@ -373,7 +373,9 @@ class TabSuggestions extends StatelessWidget {
 class TabReviews extends StatelessWidget {
   const TabReviews({
     super.key,
+    required this.controller
   });
+  final MovieDetailsController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -398,55 +400,65 @@ class TabReviews extends StatelessWidget {
             child: SizedBox(
               height: MediaQuery.sizeOf(context).height,
               child: ListView.separated(
-                itemCount: 20,
+                itemCount: controller.reviewsResponse.value.results!.length,
                 shrinkWrap: true,
                 separatorBuilder: (context, index) => const SizedBox(height: 10),
                 itemBuilder: (context, index) => GestureDetector(
                   onTap: () {
                     Get.bottomSheet(
-                      // isScrollControlled: true,
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                      isScrollControlled: true,
+                        SingleChildScrollView(
+                          child: Container(
+                            color: Theme.of(context).colorScheme.background,
+                            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                            child: Obx(() => Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(right: 8.0),
-                                        child: CircleAvatar(radius: 15,child: FlutterLogo(),),
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8.0),
+                                      child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                        backgroundImage: CachedNetworkImageProvider('${Constants.posterUrl}${controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath}'),
+                                        child: controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath!=null?
+                                        const SizedBox():const Icon(Icons.error),
                                       ),
-                                      Text('username',style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
-                                      const Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                        child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.only(right: 3.0),
-                                        child: Icon(Icons.star,size: 15,color: Colors.yellow),
-                                      ),
-                                      Text('6/10',style: Theme.of(context).textTheme.labelMedium,
-                                        overflow: TextOverflow.fade,
-                                      ),
-                                    ],
-                                  ),
-
-                                  Text('April 15',style: Theme.of(context).textTheme.labelMedium,),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text('jahjcbhjakdfhjdskgbhkdbhgkbdskbgdbkgbdskbiwhheugheuhgudhjkbkgbdskgbsdkjhgbhjksdbgkhsdbgksdbgksdbgkbsdkgbsdkgbsdkgbsdkgbskgbsdkgbksdbgksdbgksdbgsgkbsdkjgbsdkjgbsdkjbgskdbgdskjbgsdkbgksjdbgkjsdbgksdbgkjsdbgowjgbweoghwoghwoggwougwoghghwanosngoiwehjgoiwehgownhgoibhafuihguiahfnbjvndfjbuerhguihrejgnjernhgurehguherghjenudhbuhufhuierhjghweughweuhguewhguwehguwehguwehgwehgowehgouiwehgwoeghweoghowehgouwehgouewhoguewhgouwehgowehgoweStill lacking a certain magic, the newest Fantastic Beasts is a step back in the right direction',
-                                    style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColor.textGray))
-                                ],
-                              )
-                            ],
+                                    ),
+                                    Text(controller.reviewsResponse.value.results!.elementAt(index).author!,style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 3.0),
+                                      child: Icon(Icons.star,size: 15,color: Colors.yellow),
+                                    ),
+                                    Text(controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!.toStringAsFixed(1),style: Theme.of(context).textTheme.labelMedium,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ],
+                                ),
+                                separationGap(),
+                                Text(formatOnlyDate(controller.reviewsResponse.value.results!.elementAt(index).createdAt!),style: Theme.of(context).textTheme.labelMedium,),
+                              ],
+                            ),
+                                Column(
+                                  children: [
+                                    Text(controller.reviewsResponse.value.results!.elementAt(index).content!,
+                                      style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),textAlign: TextAlign.justify,)
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         )
-                    );
+                    ));
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 22,vertical: 20),
@@ -462,11 +474,16 @@ class TabReviews extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(right: 8.0),
-                                  child: CircleAvatar(radius: 15,child: FlutterLogo(),),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: CircleAvatar(
+                                      radius: 15,
+                                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                      child: controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath!=null?
+                                      const SizedBox():const Icon(Icons.error)
+                                  ),
                                 ),
-                                Text('username',style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
+                                Text(controller.reviewsResponse.value.results!.elementAt(index).author!,style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
                                 const Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 8.0),
                                   child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
@@ -475,19 +492,20 @@ class TabReviews extends StatelessWidget {
                                   padding: EdgeInsets.only(right: 3.0),
                                   child: Icon(Icons.star,size: 15,color: Colors.yellow),
                                 ),
-                                Text('6/10',style: Theme.of(context).textTheme.labelMedium,
+                                Text(controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!.toStringAsFixed(1),style: Theme.of(context).textTheme.labelMedium,
                                   overflow: TextOverflow.fade,
                                 ),
                               ],
                             ),
 
-                            Text('April 15',style: Theme.of(context).textTheme.labelMedium,),
+                            Text(formatOnlyDate(controller.reviewsResponse.value.results!.elementAt(index).createdAt!),style: Theme.of(context).textTheme.labelMedium,),
                           ],
                         ),
+                        separationGap(),
                         Column(
                           children: [
-                            Text('jahjcbhjakdfhjibhafuihguiahfnbjvndfjbuerhguihrejgnjernhgurehguherghjenudhbuhufhuierhjghweughweuhguewhguwehguwehguwehgwehgowehgouiwehgwoeghweoghowehgouwehgouewhoguewhgouwehgowehgoweStill lacking a certain magic, the newest Fantastic Beasts is a step back in the right direction',
-                            style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColor.textGray),maxLines: 4,overflow: TextOverflow.ellipsis,)
+                            Text(controller.reviewsResponse.value.results!.elementAt(index).content!,
+                                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColor.textGray),maxLines: 5,)
                           ],
                         )
                       ],
