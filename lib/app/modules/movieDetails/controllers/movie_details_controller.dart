@@ -122,7 +122,8 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
     });
   }
 
-  navigateToMovieDetails(index){
-    Get.toNamed(Routes.MOVIE_DETAILS,arguments: recommendationsResponse.value.results!.elementAt(index).id);
+  void navigateToMovieDetails(int index) {
+    final movieId = recommendationsResponse.value.results!.elementAt(index).id;
+    Get.offAndToNamed(Routes.MOVIE_DETAILS, arguments: movieId);
   }
 }

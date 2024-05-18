@@ -98,7 +98,7 @@ class Result {
     backdropPath: json["backdrop_path"],
     genreIds: json["genre_ids"] == null ? [] : List<int>.from(json["genre_ids"]!.map((x) => x)),
     id: json["id"],
-    originalLanguage: originalLanguageValues.map[json["original_language"]]!,
+    originalLanguage: originalLanguageValues.map[json["original_language"]],
     originalTitle: json["original_title"],
     overview: json["overview"],
     popularity: json["popularity"]?.toDouble(),

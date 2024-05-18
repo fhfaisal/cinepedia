@@ -38,11 +38,11 @@ class HomeView extends GetView<HomeController> {
                 actionText: 'show_all'.tr,
               ),
               Trending(controller: controller),
-              SectionSeparation(
-                separationText: 'now_showing'.tr,
-                actionText: 'show_all'.tr,
-              ),
-              NowPlaying(controller: controller),
+              // SectionSeparation(
+              //   separationText: 'now_showing'.tr,
+              //   actionText: 'show_all'.tr,
+              // ),
+              // NowPlaying(controller: controller),
               // SectionSeparation(
               //   separationText: 'popular'.tr,
               //   actionText: 'show_all'.tr,
@@ -54,23 +54,6 @@ class HomeView extends GetView<HomeController> {
       ),
     );
   }
-
-  // AppBar _homeAppbar(BuildContext context) {
-  //   return AppBar(
-  //     systemOverlayStyle: Get.isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-  //     title: Text(
-  //       'app_name'.tr,
-  //       style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.white),
-  //     ),
-  //     actions: [
-  //       IconButton(
-  //           onPressed: () => Get.changeTheme(
-  //                 Get.isDarkMode ? lightMode : darkMode,
-  //               ),
-  //           icon: Icon(Get.isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined))
-  //     ],
-  //   );
-  // }
 }
 
 class CarouselSection extends StatelessWidget {
@@ -230,31 +213,34 @@ class Trending extends StatelessWidget {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: controller.nowPlayingResponse.value.results!.length,
-              itemBuilder: (context, index) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                width: 90.w,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: CachedNetworkImage(
-                          height: 115.h,
-                          width: 90.w,
-                          imageUrl:
-                              '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).posterPath!}',
-                          placeholder: (context, url) => SizedBox(height: 115.h, width: 90.w, child: const ShimmerLoading()),
-                          errorWidget: (context, url, error) => const Icon(Icons.error_outline),
-                          imageBuilder: (context, imageProvider) => Image(image: imageProvider),
-                          fit: BoxFit.fitWidth,
-                        )),
-                    Text(
-                      controller.nowPlayingResponse.value.results!.elementAt(index).title!,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.fade,
-                    ),
-                  ],
+              itemBuilder: (context, index) => GestureDetector(
+                onTap: () => controller.navigateToMovieDetails(index),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  width: 90.w,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: CachedNetworkImage(
+                            height: 115.h,
+                            width: 90.w,
+                            imageUrl:
+                                '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).posterPath!}',
+                            placeholder: (context, url) => SizedBox(height: 115.h, width: 90.w, child: const ShimmerLoading()),
+                            errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                            imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                            fit: BoxFit.fitWidth,
+                          )),
+                      Text(
+                        controller.nowPlayingResponse.value.results!.elementAt(index).title!,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        maxLines: 2,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
