@@ -23,7 +23,7 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
   Widget build(BuildContext context) {
     return Obx(() => controller.isLoading.value?
         const Center(child: CircularProgressIndicator(),)
-    :SafeArea(
+    :Obx(() => SafeArea(
       child: DefaultTabController(
         length: controller.myTabs.length,
         child: Scaffold(
@@ -55,7 +55,7 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
               ],
             )),
       ),
-    ));
+    )));
   }
 
   Container ticketsSection(BuildContext context) {
@@ -487,7 +487,7 @@ class TabReviews extends StatelessWidget {
                                       padding: EdgeInsets.only(right: 3.0),
                                       child: Icon(Icons.star,size: 15,color: Colors.yellow),
                                     ),
-                                    Text(controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!.toStringAsFixed(1),style: Theme.of(context).textTheme.labelMedium,
+                                    Text(controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!=null?controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!.toStringAsFixed(1):"Not Rated",style: Theme.of(context).textTheme.labelMedium,
                                       overflow: TextOverflow.fade,
                                     ),
                                   ],
@@ -694,8 +694,8 @@ class TabOverView extends StatelessWidget {
           separationGap(),
           SectionSeparation(separationText: 'cast'.tr, actionText: 'show_all'.tr,isAction: true,),
           Expanded(
-            child: Obx(() => controller.isLoading.value?
-                const Center(child: CircularProgressIndicator(),)
+            child: Obx(() => controller.isLoadingCredits.value?
+            const Center(child: CircularProgressIndicator())
                 :Container(
               height: 125.h,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -709,46 +709,51 @@ class TabOverView extends StatelessWidget {
                   child: Column(
                     children: [
                       CircleAvatar(
-                        radius: 40.r,
+                        radius: 30.r,
                         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                        backgroundImage: CachedNetworkImageProvider('${Constants.posterUrl}${controller.creditsResponse.value.cast!.elementAt(index).profilePath}'),
+                        backgroundImage: controller.creditsResponse.value.cast!.elementAt(index).profilePath!=null?
+                        CachedNetworkImageProvider('${Constants.posterUrl}${controller.creditsResponse.value.cast!.elementAt(index).profilePath}')
+                            :const CachedNetworkImageProvider(''),
                         child: controller.creditsResponse.value.cast!.elementAt(index).profilePath!=null?const SizedBox():const Icon(Icons.error,size: 50,),
                       ),
-                      Text(controller.creditsResponse.value.cast!.elementAt(index).character!,style: Theme.of(context).textTheme.labelMedium,),
+                      Text(controller.creditsResponse.value.cast!.elementAt(index).character!,style: Theme.of(context).textTheme.labelMedium,textAlign: TextAlign.center,maxLines: 2,),
                       Text(controller.creditsResponse.value.cast!.elementAt(index).originalName!,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
                     ],
                   ),
                 ),
               ),
-            )
-            ),
+            )),
           ),
-          SectionSeparation(separationText: 'crew'.tr, actionText: 'show_all'.tr),
+          SectionSeparation(separationText: 'crew'.tr, actionText: 'show_all'.tr,isAction: true,),
           Expanded(
-            child: Obx(() => controller.isLoading.value?
-                const Center(child: CircularProgressIndicator(),)
-                :SizedBox(
-              height: 125.h,
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: controller.creditsResponse.value.crew!.length,
-                scrollDirection: Axis.horizontal,
-                separatorBuilder: (context, index) => const SizedBox(width: 10),
-                itemBuilder: (context, index) => Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 30.r,
-                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                      backgroundImage: CachedNetworkImageProvider('${Constants.posterUrl}${controller.creditsResponse.value.crew!.elementAt(index).profilePath}'),
-                      child: controller.creditsResponse.value.crew!.elementAt(index).profilePath!=null?const SizedBox():const Icon(Icons.error,size: 50,),
+            child: Obx(() => controller.isLoadingCredits.value?
+            const Center(child: CircularProgressIndicator())
+                :Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: controller.creditsResponse.value.crew!.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) => Container(
+                      width: 100.w,
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 30.r,
+                            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                            backgroundImage: controller.creditsResponse.value.crew!.elementAt(index).profilePath!=null?
+                            CachedNetworkImageProvider('${Constants.posterUrl}${controller.creditsResponse.value.crew!.elementAt(index).profilePath}')
+                            :const CachedNetworkImageProvider(''),
+                            child: controller.creditsResponse.value.crew!.elementAt(index).profilePath!=null?const SizedBox():const Icon(Icons.error,size: 50,),
+                          ),
+                          Text(controller.creditsResponse.value.crew!.elementAt(index).department!,style: Theme.of(context).textTheme.labelMedium,textAlign: TextAlign.center,maxLines: 2,),
+                          Text(controller.creditsResponse.value.crew!.elementAt(index).originalName!,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
+                        ],
+                      ),
                     ),
-                    Text(controller.creditsResponse.value.crew!.elementAt(index).name!,style: Theme.of(context).textTheme.labelMedium,),
-                    Text(controller.creditsResponse.value.crew!.elementAt(index).department!,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
-                  ],
-                ),
-              ),
-            )
-            ),
+                  ),
+                )),
           ),
         ],
       ),

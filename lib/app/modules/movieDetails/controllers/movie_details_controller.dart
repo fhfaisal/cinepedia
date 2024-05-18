@@ -24,6 +24,7 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
   ];
 
   final isLoading = false.obs;
+  final isLoadingCredits = false.obs;
   final Rx<MovieDetailsResponse> movieDetailsResponse = MovieDetailsResponse().obs;
   final Rx<CreditsResponse> creditsResponse = CreditsResponse().obs;
   final Rx<ImagesResponse> imageResponse = ImagesResponse().obs;
@@ -35,23 +36,27 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
   void onInit() {
     initializeMovieId(); // Call initialization method onInit
     tabController = TabController(vsync: this, length: myTabs.length);
-    fetchCredits();
-    fetchImages();
-    fetchReviews();
-    fetchSimilar();
-    fetchRecommendations();
     super.onInit();
   }
 
   @override
   void onReady() {
     tabController = TabController(vsync: this, length: myTabs.length,initialIndex: 0);
+    fetchAllData();
     super.onReady();
   }
 
   @override
   void onClose() {
     super.onClose();
+  }
+  fetchAllData(){
+    fetchMovieDetails();
+    fetchCredits();
+    fetchImages();
+    fetchReviews();
+    fetchSimilar();
+    fetchRecommendations();
   }
 
   // Function to initialize movieId with Get.arguments
@@ -61,7 +66,7 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
     if (getId != null && getId is int) {
       movieId = getId;
       // Fetch movie details using the received movieId
-      fetchMovieDetails();
+      fetchAllData();
     } else {
       // Handle the case where no arguments are received or they are of unexpected type
       // You can show an error message or navigate back to the previous page
@@ -80,12 +85,12 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
     update();
   }
   Future<void> fetchCredits() async {
-    isLoading.value = true;
+    isLoadingCredits.value = true;
     await creditsResponseApi(movieId).then((response) {
       if (response != null) {
         creditsResponse.value = response;
       }
-      isLoading.value = false;
+      isLoadingCredits.value = false;
     });
     update();
   }
