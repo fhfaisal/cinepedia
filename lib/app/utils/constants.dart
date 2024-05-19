@@ -7,13 +7,15 @@ class Constants{
   static const String nowPlying="movie/now_playing";
   static const String moviePopular="movie/movie/popular";
   ///Movie Details Api
-  static const String movieDetails="movie/";
+  static const String movie="movie/";
   static const String credits="/credits";
   static const String images="/images";
   static const String reviews="/reviews";
   static const String similar="/similar";
   static const String recommendations="/recommendations";
-  ///
+  ///TV SERIES API
+  static const String tv="tv/";
+  static const String topRated="top_rated";
   static const String posterUrl="https://image.tmdb.org/t/p/original";
   static const String logInEmail="login";
   static const String signUp="register";

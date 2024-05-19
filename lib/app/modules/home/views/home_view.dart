@@ -38,11 +38,16 @@ class HomeView extends GetView<HomeController> {
                 actionText: 'show_all'.tr,
               ),
               Trending(controller: controller),
-              // SectionSeparation(
-              //   separationText: 'now_showing'.tr,
-              //   actionText: 'show_all'.tr,
-              // ),
-              // NowPlaying(controller: controller),
+              SectionSeparation(
+                separationText: 'now_showing'.tr,
+                actionText: 'show_all'.tr,
+              ),
+              NowPlaying(controller: controller),
+              SectionSeparation(
+                separationText: 'Tv Series'.tr,
+                actionText: 'show_all'.tr,
+              ),
+              TopTvSeries(controller: controller),
               // SectionSeparation(
               //   separationText: 'popular'.tr,
               //   actionText: 'show_all'.tr,
@@ -259,7 +264,7 @@ class NowPlaying extends StatelessWidget {
     return Obx(() => controller.isLoading.value
         ? SizedBox(height: 130.h, child: const NowPlayingLoader())
         : SizedBox(
-            height: 130.h,
+            height: 120.h,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: controller.nowPlayingResponse.value.results!.length,
@@ -471,6 +476,133 @@ class PopularMovie extends StatelessWidget {
                 ),
               ),
             )),
+    );
+  }
+}
+class TopTvSeries extends StatelessWidget {
+  const TopTvSeries({
+    super.key,
+    required this.controller,
+  });
+
+  final HomeController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 160,
+      child: Obx(() => controller.isLoading.value
+          ? ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 10,
+        itemBuilder: (context, index) => Container(
+          width: 150,
+          margin: const EdgeInsets.only(right: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Shimmer.fromColors(
+                baseColor: Theme.of(context).colorScheme.errorContainer,
+                highlightColor: Theme.of(context).highlightColor,
+                direction: ShimmerDirection.ltr,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  elevation: 5,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: SizedBox(
+                      height: 90,
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.red,
+                        highlightColor: Colors.yellow,
+                        direction: ShimmerDirection.ltr,
+                        child: Center(
+                          child: Text(
+                            'Loading',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Shimmer.fromColors(
+                baseColor: Colors.grey.shade300,
+                highlightColor: Colors.grey.shade200,
+                child: Container(
+                  height: 20,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.0),
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
+          : ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: controller.topTvSeriesResponse.value.results!.length,
+        itemBuilder: (context, index) => Container(
+          width: 150,
+          height: 150,
+          margin: const EdgeInsets.only(right: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                elevation: 5,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: CachedNetworkImage(
+                      height: 90,
+                      imageUrl: controller.topTvSeriesResponse.value.results!.elementAt(index).backdropPath != null
+                          ? '${Constants.posterUrl}${controller.topTvSeriesResponse.value.results!.elementAt(index).backdropPath}'
+                          : 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/640px-Image_not_available.png',
+                      placeholder: (context, url) => SizedBox(
+                        height: 120,
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.red,
+                          highlightColor: Colors.yellow,
+                          direction: ShimmerDirection.ltr,
+                          child: Center(
+                            child: Text(
+                              'Loading',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                        ),
+                      ),
+                      fit: BoxFit.cover,
+                    )),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                controller.topTvSeriesResponse.value.results!.elementAt(index).name!,
+                style: Theme.of(context).textTheme.labelMedium,
+                maxLines: 2,
+                overflow: TextOverflow.fade,
+              ),
+              Text(
+                '${'release_date'.tr} ${formatOnlyDate(controller.topTvSeriesResponse.value.results!.elementAt(index).firstAirDate!)}',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(height: 2),
+                maxLines: 2,
+                overflow: TextOverflow.fade,
+              ),
+            ],
+          ),
+        ),
+      )),
     );
   }
 }

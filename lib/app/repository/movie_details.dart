@@ -9,7 +9,7 @@ import '../utils/constants.dart';
 
 Future<CreditsResponse?> creditsResponseApi(int id) async {
   String credits =
-      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movieDetails}$id${Constants.credits}";
+      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movie}$id${Constants.credits}";
   var dioClient = Dio();
   dioClient.options.headers['Accept'] = "application/json";
   dioClient.options.headers['content-Type'] = 'application/json';
@@ -39,7 +39,7 @@ Future<CreditsResponse?> creditsResponseApi(int id) async {
 }
 Future<ImagesResponse?> imageResponseApi(int id) async {
   String image =
-      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movieDetails}$id${Constants.images}";
+      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movie}$id${Constants.images}";
   var dioClient = Dio();
   dioClient.options.headers['Accept'] = "application/json";
   dioClient.options.headers['content-Type'] = 'application/json';
@@ -69,7 +69,7 @@ Future<ImagesResponse?> imageResponseApi(int id) async {
 }
 Future<ReviewsResponse?> reviewsResponseApi(int id) async {
   String reviews =
-      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movieDetails}$id${Constants.reviews}";
+      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movie}$id${Constants.reviews}";
   var dioClient = Dio();
   dioClient.options.headers['Accept'] = "application/json";
   dioClient.options.headers['content-Type'] = 'application/json';
@@ -99,7 +99,7 @@ Future<ReviewsResponse?> reviewsResponseApi(int id) async {
 }
 Future<SimilarResponse?> similarResponseApi(int id) async {
   String similar =
-      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movieDetails}$id${Constants.similar}";
+      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movie}$id${Constants.similar}";
   var dioClient = Dio();
   dioClient.options.headers['Accept'] = "application/json";
   dioClient.options.headers['content-Type'] = 'application/json';
@@ -113,7 +113,7 @@ Future<SimilarResponse?> similarResponseApi(int id) async {
   "POST, GET, OPTIONS, PUT, DELETE, HEAD";
   try {
     final response = await dioClient.get('$similar?',queryParameters: {'api_key':Constants.apiKey});
-    debugPrint(response.data.toString());
+    // debugPrint(response.data.toString());
     if(response.statusCode == 200){
       return SimilarResponse.fromJson(response.data);
     }else{
@@ -129,7 +129,7 @@ Future<SimilarResponse?> similarResponseApi(int id) async {
 }
 Future<SimilarResponse?> recommendationsResponseApi(int id) async {
   String recommendations =
-      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movieDetails}$id${Constants.recommendations}";
+      "${Constants.baseUrl}${Constants.apiPrefix}${Constants.movie}$id${Constants.recommendations}";
   var dioClient = Dio();
   dioClient.options.headers['Accept'] = "application/json";
   dioClient.options.headers['content-Type'] = 'application/json';
@@ -143,7 +143,7 @@ Future<SimilarResponse?> recommendationsResponseApi(int id) async {
   "POST, GET, OPTIONS, PUT, DELETE, HEAD";
   try {
     final response = await dioClient.get('$recommendations?',queryParameters: {'api_key':Constants.apiKey});
-    debugPrint(response.data.toString());
+    // debugPrint(response.data.toString());
     if(response.statusCode == 200){
       return SimilarResponse.fromJson(response.data);
     }else{
