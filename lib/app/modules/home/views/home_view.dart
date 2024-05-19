@@ -546,46 +546,29 @@ class TopTvSeries extends StatelessWidget {
           ),
         ),
       )
-          : ListView.builder(
+          : Obx(() => ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: controller.topTvSeriesResponse.value.results!.length,
         itemBuilder: (context, index) => Container(
           width: 150,
           height: 150,
-          margin: const EdgeInsets.only(right: 10),
+          margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Card(
-                shape: RoundedRectangleBorder(
+              ClipRRect(
                   borderRadius: BorderRadius.circular(5),
-                ),
-                elevation: 5,
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: CachedNetworkImage(
-                      height: 90,
-                      imageUrl: controller.topTvSeriesResponse.value.results!.elementAt(index).backdropPath != null
-                          ? '${Constants.posterUrl}${controller.topTvSeriesResponse.value.results!.elementAt(index).backdropPath}'
-                          : 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/640px-Image_not_available.png',
-                      placeholder: (context, url) => SizedBox(
-                        height: 120,
-                        child: Shimmer.fromColors(
-                          baseColor: Colors.red,
-                          highlightColor: Colors.yellow,
-                          direction: ShimmerDirection.ltr,
-                          child: Center(
-                            child: Text(
-                              'Loading',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ),
-                        ),
-                      ),
-                      fit: BoxFit.cover,
-                    )),
-              ),
+                  child: CachedNetworkImage(
+                    height: 90,
+                    imageUrl: controller.topTvSeriesResponse.value.results!.elementAt(index).backdropPath != null
+                        ? '${Constants.posterUrl}${controller.topTvSeriesResponse.value.results!.elementAt(index).backdropPath}'
+                        : 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/640px-Image_not_available.png',
+                    placeholder: (context, url) => const SizedBox(
+                      height: 120,
+                      child: ShimmerLoading()
+                    ),
+                    fit: BoxFit.cover,
+                  )),
               const SizedBox(height: 8),
               Text(
                 controller.topTvSeriesResponse.value.results!.elementAt(index).name!,
@@ -602,7 +585,7 @@ class TopTvSeries extends StatelessWidget {
             ],
           ),
         ),
-      )),
+      ))),
     );
   }
 }

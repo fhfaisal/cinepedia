@@ -35,9 +35,10 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
   @override
   void onInit() {
     initializeMovieId(); // Call initialization method onInit
-    tabController = TabController(vsync: this, length: myTabs.length);
+    tabController = TabController(vsync: this, length: myTabs.length,initialIndex: 0);
     super.onInit();
   }
+
 
   @override
   void onReady() {
@@ -130,6 +131,7 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
   reloadPage(index){
     movieId=index;
     fetchAllData();
+    tabController = TabController(vsync: this, length: myTabs.length,initialIndex: 0);
     update();
   }
 }

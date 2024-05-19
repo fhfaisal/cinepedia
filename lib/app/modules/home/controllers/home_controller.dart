@@ -22,12 +22,12 @@ class HomeController extends GetxController {
 
   @override
   void onInit() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+   // WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchTopRatedTvSeries();
       nowPlayingResponseDataCall();
       sliderController = CarouselSliderController();
       // popularDataCall();
-    });
+    // });
     super.onInit();
   }
 
