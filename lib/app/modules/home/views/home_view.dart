@@ -83,18 +83,17 @@ class CarouselSection extends StatelessWidget {
             child: Stack(
               children: [
                 CarouselSlider.builder(
+                  enableAutoSlider: true,
                   unlimitedMode: true,
-                  // autoSliderDelay: const Duration(seconds: 500),
-                  // autoSliderTransitionCurve: Curves.linear,
-                  // autoSliderTransitionTime: const Duration(seconds: 200),
-                  slideTransform: const AccordionTransform(),
+                  controller: controller.sliderController,
+                  slideTransform: StackTransform(),
                   slideIndicator: CircularSlideIndicator(
                       itemSpacing: 10,
                       padding: EdgeInsets.only(bottom: 20.h),
                       indicatorRadius: 3.r,
                       indicatorBackgroundColor: Theme.of(context).colorScheme.secondary,
                       currentIndicatorColor: Theme.of(context).colorScheme.primary),
-                  itemCount: controller.nowPlayingResponse.value.results!.length - 15,
+                  itemCount: controller.nowPlayingResponse.value.results!.length - 10,
                   slideBuilder: (index) {
                     controller.selectedIndex.value = index;
                     return GestureDetector(
@@ -177,6 +176,7 @@ class CarouselSection extends StatelessWidget {
                                         .copyWith(decoration: TextDecoration.underline, letterSpacing: 1.5))),
                           ],
                         ),
+                        separationGap(),
                         PrimaryButton(
                           height: 20.h,
                           controller: controller,
@@ -188,6 +188,7 @@ class CarouselSection extends StatelessWidget {
                     ),
                   ),
                 ),
+
               ],
             )));
   }

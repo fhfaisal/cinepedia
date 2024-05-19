@@ -379,8 +379,10 @@ class TabSuggestions extends StatelessWidget {
               itemCount: controller.recommendationsResponse.value.results!.length,
               itemBuilder: (context, index) => GestureDetector(
                 onTap: () {
-                  print(controller.recommendationsResponse.value.results!.elementAt(index).id);
-                  controller.navigateToMovieDetails(index);
+                  //print(controller.recommendationsResponse.value.results!.elementAt(index).id);
+                  //controller.movieId = controller.recommendationsResponse.value.results!.elementAt(index).id!;
+                  //controller.fetchAllData();
+                  controller.reloadPage(controller.recommendationsResponse.value.results!.elementAt(index).id);
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
