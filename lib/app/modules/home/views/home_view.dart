@@ -87,7 +87,7 @@ class CarouselSection extends StatelessWidget {
             height: 300.h,
             child: Stack(
               children: [
-                CarouselSlider.builder(
+                Obx(() => CarouselSlider.builder(
                   enableAutoSlider: true,
                   unlimitedMode: true,
                   controller: controller.sliderController,
@@ -115,7 +115,7 @@ class CarouselSection extends StatelessWidget {
                                     stops: const [0.0, 0.9])),
                             child: CachedNetworkImage(
                               imageUrl:
-                                  '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).backdropPath ?? controller.nowPlayingResponse.value.results!.elementAt(index).posterPath}',
+                              '${Constants.posterUrl}${controller.nowPlayingResponse.value.results!.elementAt(index).backdropPath ?? controller.nowPlayingResponse.value.results!.elementAt(index).posterPath}',
                               fit: BoxFit.fitHeight,
                               width: double.maxFinite,
                               height: 300.h,
@@ -129,7 +129,7 @@ class CarouselSection extends StatelessWidget {
                       ),
                     );
                   },
-                ),
+                ),),
                 Positioned(
                   left: 0,
                   right: 0,
