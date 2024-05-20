@@ -6,6 +6,7 @@ import 'package:cinepedia/app/utils/section_separation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -214,29 +215,61 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
   Stack imageSection(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          foregroundDecoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: AlignmentDirectional.center,
-                  end: AlignmentDirectional.bottomCenter,
-                  colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor.withOpacity(0.93)],
-                  stops: const [0.0, 0.9])),
-          child: CachedNetworkImage(
-            imageUrl: '${Constants.posterUrl}${controller.movieDetailsResponse.value.backdropPath}',
-            fit: BoxFit.fitHeight,
-            width: double.maxFinite,
-            height: 300.h,
-            placeholder: (context, url) => SizedBox(
-              height: 300.h,
-              child: const ShimmerLoading(),
-            ),
-          ),
+        SizedBox(
+          height: 300.h,
+          child: Obx(() => CarouselSlider.builder(
+            enableAutoSlider: true,
+            unlimitedMode: true,
+            slideTransform: const ParallaxTransform(),
+            itemCount: controller.imageResponse.value.backdrops!.length,
+            slideBuilder: (index) {
+              controller.selectedIndex.value = index;
+              return Container(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                foregroundDecoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: AlignmentDirectional.center,
+                        end: AlignmentDirectional.bottomCenter,
+                        colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor],
+                        stops: const [0.0, 0.9])),
+                child: CachedNetworkImage(
+                  imageUrl:
+                  '${Constants.posterUrl}${controller.imageResponse.value.backdrops!.elementAt(index).filePath}',
+                  fit: BoxFit.fitHeight,
+                  width: double.maxFinite,
+                  height: 300.h,
+                  placeholder: (context, url) => SizedBox(
+                    height: 300.h,
+                    child: const ShimmerLoading(),
+                  ),
+                ),
+              );
+            },
+          ),),
         ),
+        // Container(
+        //   color: Theme.of(context).scaffoldBackgroundColor,
+        //   foregroundDecoration: BoxDecoration(
+        //       gradient: LinearGradient(
+        //           begin: AlignmentDirectional.center,
+        //           end: AlignmentDirectional.bottomCenter,
+        //           colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor.withOpacity(0.93)],
+        //           stops: const [0.0, 0.9])),
+        //   child: CachedNetworkImage(
+        //     imageUrl: '${Constants.posterUrl}${controller.movieDetailsResponse.value.backdropPath}',
+        //     fit: BoxFit.fitHeight,
+        //     width: double.maxFinite,
+        //     height: 300.h,
+        //     placeholder: (context, url) => SizedBox(
+        //       height: 300.h,
+        //       child: const ShimmerLoading(),
+        //     ),
+        //   ),
+        // ),
         Positioned(
           left: 0,
           right: 0,
-          bottom: 0,
+          bottom: 20,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Column(
@@ -660,11 +693,11 @@ class TabOverView extends StatelessWidget {
         children: [
           Text('overview'.tr,
               style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
-          Text(
+          Flexible(child: Text(
             controller.movieDetailsResponse.value.overview!,
             style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
             textAlign: TextAlign.justify,
-          ),
+          ),),
           separationGap(),
           Row(
             children: List.generate(

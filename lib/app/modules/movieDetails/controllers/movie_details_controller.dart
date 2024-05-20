@@ -16,6 +16,7 @@ import '../../../utils/constants.dart';
 class MovieDetailsController extends GetxController with GetTickerProviderStateMixin {
   late int movieId; // Declare movieId variable
   late TabController tabController;
+  var selectedIndex = 0.obs;
   final myTabs = [
     Tab(text: 'Overview'),
     Tab(text: 'Details'),

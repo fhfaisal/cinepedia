@@ -13,7 +13,6 @@ dependencies:
   intl: ^0.19.0 #DateTime format
   shimmer: ^3.0.0 #Shimmer effect
   flutter_carousel_slider: ^1.1.0
-  carousel_slider:
   flutter_screenutil: ^5.9.0
   flutter_svg: ^2.0.10+1
   flutter: 
