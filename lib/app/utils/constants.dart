@@ -17,7 +17,9 @@ class Constants{
   static const String tv="tv/";
   static const String topRated="top_rated";
   static const String posterUrl="https://image.tmdb.org/t/p/original";
-  static const String logInEmail="login";
+  ///PEOPLE
+
+  static const String person="person/";
   static const String signUp="register";
   static const String PROFILERESPONSE="register";
   static const bool SUBSCRIPTION= false;

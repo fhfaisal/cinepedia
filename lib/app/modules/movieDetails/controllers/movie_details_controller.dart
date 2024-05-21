@@ -128,8 +128,8 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
       }
     });
   }
-  navigationToActorDetails(){
-    Get.toNamed(Routes.ACTOR_DETAILS);
+  navigationToActorDetails(index){
+    Get.toNamed(Routes.ACTOR_DETAILS,arguments: index);
   }
 
   reloadPage(index){

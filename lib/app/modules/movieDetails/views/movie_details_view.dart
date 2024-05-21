@@ -782,7 +782,7 @@ class TabOverView extends StatelessWidget {
                   itemCount: controller.creditsResponse.value.cast!.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) => GestureDetector(
-                    onTap: () => controller.navigationToActorDetails(),
+                    onTap: () => controller.navigationToActorDetails(controller.creditsResponse.value.cast!.elementAt(index).id),
                     child: SizedBox(
                       width: 90.w,
                       //padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -826,7 +826,7 @@ class TabOverView extends StatelessWidget {
                   itemCount: controller.creditsResponse.value.crew!.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) => GestureDetector(
-                    onTap: () => controller.navigationToActorDetails(),
+                    onTap: () => controller.navigationToActorDetails(controller.creditsResponse.value.crew!.elementAt(index).id),
                     child: SizedBox(
                       width: 90.w,
                       //padding: const EdgeInsets.symmetric(horizontal: 5),
