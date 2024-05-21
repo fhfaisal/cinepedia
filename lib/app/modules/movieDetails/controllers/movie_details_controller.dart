@@ -128,6 +128,9 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
       }
     });
   }
+  navigationToActorDetails(){
+    Get.toNamed(Routes.ACTOR_DETAILS);
+  }
 
   reloadPage(index){
     movieId=index;

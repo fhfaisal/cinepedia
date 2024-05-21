@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cinepedia/app/theme/colors.dart';
-import 'package:cinepedia/app/utils/buttons/primary_button.dart';
 import 'package:cinepedia/app/utils/imagePath/movieDetails.dart';
-import 'package:cinepedia/app/utils/section_separation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -22,41 +20,43 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => controller.isLoading.value?
-        const Center(child: CircularProgressIndicator(),)
-    :Obx(() => SafeArea(
-      child: DefaultTabController(
-        length: controller.myTabs.length,
-        child: Scaffold(
-          //appBar: AppBar(backgroundColor: Colors.transparent,),
-            body: ListView(
-              children: [
-                imageSection(context),
-                countingSection(context),
-                separationGap(),
-                ticketsSection(context),
-                TabBar(
-                    controller: controller.tabController,
-                    isScrollable: true,
-                    unselectedLabelColor: AppColor.textGray,
-                    tabAlignment: TabAlignment.center,
-                    tabs: controller.myTabs),
-                SizedBox(
-                  height: MediaQuery.sizeOf(context).height/1.8,
-                  child: TabBarView(
-                    controller: controller.tabController,
-                    children: [
-                      TabOverView(controller: controller),
-                      TabDetails(controller: controller),
-                      TabReviews(controller: controller),
-                      TabSuggestions(controller: controller)
-                    ],
-                  ),
-                )
-              ],
-            )),
-      ),
-    )));
+    return Obx(() => controller.isLoading.value
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Obx(() => SafeArea(
+              child: DefaultTabController(
+                length: controller.myTabs.length,
+                child: Scaffold(
+                    //appBar: AppBar(backgroundColor: Colors.transparent,),
+                    body: ListView(
+                  children: [
+                    imageSection(context),
+                    countingSection(context),
+                    separationGap(),
+                    ticketsSection(context),
+                    TabBar(
+                        controller: controller.tabController,
+                        isScrollable: true,
+                        unselectedLabelColor: AppColor.textGray,
+                        tabAlignment: TabAlignment.center,
+                        tabs: controller.myTabs),
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height / 1.8,
+                      child: TabBarView(
+                        controller: controller.tabController,
+                        children: [
+                          TabOverView(controller: controller),
+                          TabDetails(controller: controller),
+                          TabReviews(controller: controller),
+                          TabSuggestions(controller: controller)
+                        ],
+                      ),
+                    )
+                  ],
+                )),
+              ),
+            )));
   }
 
   Container ticketsSection(BuildContext context) {
@@ -217,35 +217,36 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
       children: [
         SizedBox(
           height: 300.h,
-          child: Obx(() => CarouselSlider.builder(
-            enableAutoSlider: true,
-            unlimitedMode: true,
-            slideTransform: const ParallaxTransform(),
-            itemCount: controller.imageResponse.value.backdrops!.length,
-            slideBuilder: (index) {
-              controller.selectedIndex.value = index;
-              return Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                foregroundDecoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: AlignmentDirectional.center,
-                        end: AlignmentDirectional.bottomCenter,
-                        colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor],
-                        stops: const [0.0, 0.9])),
-                child: CachedNetworkImage(
-                  imageUrl:
-                  '${Constants.posterUrl}${controller.imageResponse.value.backdrops!.elementAt(index).filePath}',
-                  fit: BoxFit.fitHeight,
-                  width: double.maxFinite,
-                  height: 300.h,
-                  placeholder: (context, url) => SizedBox(
+          child: Obx(
+            () => CarouselSlider.builder(
+              enableAutoSlider: true,
+              unlimitedMode: true,
+              slideTransform: const ParallaxTransform(),
+              itemCount: controller.imageResponse.value.backdrops!.length,
+              slideBuilder: (index) {
+                controller.selectedIndex.value = index;
+                return Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  foregroundDecoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: AlignmentDirectional.center,
+                          end: AlignmentDirectional.bottomCenter,
+                          colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor],
+                          stops: const [0.0, 0.9])),
+                  child: CachedNetworkImage(
+                    imageUrl: '${Constants.posterUrl}${controller.imageResponse.value.backdrops!.elementAt(index).filePath}',
+                    fit: BoxFit.fitHeight,
+                    width: double.maxFinite,
                     height: 300.h,
-                    child: const ShimmerLoading(),
+                    placeholder: (context, url) => SizedBox(
+                      height: 300.h,
+                      child: const ShimmerLoading(),
+                    ),
                   ),
-                ),
-              );
-            },
-          ),),
+                );
+              },
+            ),
+          ),
         ),
         // Container(
         //   color: Theme.of(context).scaffoldBackgroundColor,
@@ -301,10 +302,8 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
 }
 
 class TabSuggestions extends StatelessWidget {
-  const TabSuggestions({
-    super.key,
-    required this.controller
-  });
+  const TabSuggestions({super.key, required this.controller});
+
   final MovieDetailsController controller;
 
   @override
@@ -403,50 +402,52 @@ class TabSuggestions extends StatelessWidget {
           //     ),
           //   ),
           // )),
-          Text('recommendations'.tr,style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
-          Obx(() =>controller.isLoading.value?const Center(child: CircularProgressIndicator())
-          :SizedBox(
-            height: 150.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.recommendationsResponse.value.results!.length,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () {
-                  //print(controller.recommendationsResponse.value.results!.elementAt(index).id);
-                  //controller.movieId = controller.recommendationsResponse.value.results!.elementAt(index).id!;
-                  //controller.fetchAllData();
-                  controller.reloadPage(controller.recommendationsResponse.value.results!.elementAt(index).id);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  width: 90.w,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: CachedNetworkImage(
-                            height: 115.h,
-                            width: 90.w,
-                            imageUrl:
-                            '${Constants.posterUrl}${controller.recommendationsResponse.value.results!.elementAt(index).posterPath}',
-                            placeholder: (context, url) => SizedBox(height: 115.h, width: 90.w, child: const ShimmerLoading()),
-                            errorWidget: (context, url, error) => const Icon(Icons.error_outline),
-                            imageBuilder: (context, imageProvider) => Image(image: imageProvider),
-                            fit: BoxFit.fitWidth,
-                          )),
-                      Text(
-                        controller.recommendationsResponse.value.results!.elementAt(index).title!,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        maxLines: 2,
-                        overflow: TextOverflow.fade,
+          Text('recommendations'.tr, style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Obx(() => controller.isLoading.value
+              ? const Center(child: CircularProgressIndicator())
+              : SizedBox(
+                  height: 150.h,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.recommendationsResponse.value.results!.length,
+                    itemBuilder: (context, index) => GestureDetector(
+                      onTap: () {
+                        //print(controller.recommendationsResponse.value.results!.elementAt(index).id);
+                        //controller.movieId = controller.recommendationsResponse.value.results!.elementAt(index).id!;
+                        //controller.fetchAllData();
+                        controller.reloadPage(controller.recommendationsResponse.value.results!.elementAt(index).id);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        width: 90.w,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: CachedNetworkImage(
+                                  height: 115.h,
+                                  width: 90.w,
+                                  imageUrl:
+                                      '${Constants.posterUrl}${controller.recommendationsResponse.value.results!.elementAt(index).posterPath}',
+                                  placeholder: (context, url) =>
+                                      SizedBox(height: 115.h, width: 90.w, child: const ShimmerLoading()),
+                                  errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                                  imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                                  fit: BoxFit.fitWidth,
+                                )),
+                            Text(
+                              controller.recommendationsResponse.value.results!.elementAt(index).title!,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              maxLines: 2,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ))
+                ))
         ],
       ),
     );
@@ -454,30 +455,30 @@ class TabSuggestions extends StatelessWidget {
 }
 
 class TabReviews extends StatelessWidget {
-  const TabReviews({
-    super.key,
-    required this.controller
-  });
+  const TabReviews({super.key, required this.controller});
+
   final MovieDetailsController controller;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('reviews'.tr,style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Text('reviews'.tr, style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      stops: const [0.1, 1],
-                      colors: [Theme.of(context).colorScheme.onPrimary.withOpacity(1),Theme.of(context).colorScheme.onSecondary.withOpacity(1)])),
-              child: Text('top_review'.tr,style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold))),
+                  gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, stops: const [
+                    0.1,
+                    1
+                  ], colors: [
+                    Theme.of(context).colorScheme.onPrimary.withOpacity(1),
+                    Theme.of(context).colorScheme.onSecondary.withOpacity(1)
+                  ])),
+              child: Text('top_review'.tr, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold))),
           separationGap(),
           Expanded(
             child: SizedBox(
@@ -489,106 +490,156 @@ class TabReviews extends StatelessWidget {
                 itemBuilder: (context, index) => GestureDetector(
                   onTap: () {
                     Get.bottomSheet(
-                      isScrollControlled: true,
+                        isScrollControlled: true,
                         SingleChildScrollView(
-                          child: Container(
-                            color: Theme.of(context).colorScheme.background,
-                            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                            child: Obx(() => Column(
+                            child: Container(
+                          color: Theme.of(context).colorScheme.background,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: Obx(
+                            () => Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                              Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 8.0),
-                                      child: CircleAvatar(
-                                        radius: 15,
-                                        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                                        backgroundImage: CachedNetworkImageProvider('${Constants.posterUrl}${controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath}'),
-                                        child: controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath!=null?
-                                        const SizedBox():const Icon(Icons.error),
-                                      ),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: CircleAvatar(
+                                            radius: 15,
+                                            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                            backgroundImage: CachedNetworkImageProvider(
+                                                '${Constants.posterUrl}${controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath}'),
+                                            child: controller.reviewsResponse.value.results!
+                                                        .elementAt(index)
+                                                        .authorDetails!
+                                                        .avatarPath !=
+                                                    null
+                                                ? const SizedBox()
+                                                : const Icon(Icons.error),
+                                          ),
+                                        ),
+                                        Text(
+                                          controller.reviewsResponse.value.results!.elementAt(index).author.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium!
+                                              .copyWith(color: Theme.of(context).colorScheme.primary),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                          child: CircleAvatar(
+                                            radius: 2,
+                                            backgroundColor: AppColor.white,
+                                          ),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.only(right: 3.0),
+                                          child: Icon(Icons.star, size: 15, color: Colors.yellow),
+                                        ),
+                                        Text(
+                                          controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating != null
+                                              ? controller.reviewsResponse.value.results!
+                                                  .elementAt(index)
+                                                  .authorDetails!
+                                                  .rating!
+                                                  .toStringAsFixed(1)
+                                              : "Not Rated",
+                                          style: Theme.of(context).textTheme.labelMedium,
+                                          overflow: TextOverflow.fade,
+                                        ),
+                                      ],
                                     ),
-                                    Text(controller.reviewsResponse.value.results!.elementAt(index).author.toString(),style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
-                                    const Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                      child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.only(right: 3.0),
-                                      child: Icon(Icons.star,size: 15,color: Colors.yellow),
-                                    ),
-                                    Text(controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!=null?controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!.toStringAsFixed(1):"Not Rated",style: Theme.of(context).textTheme.labelMedium,
-                                      overflow: TextOverflow.fade,
+                                    separationGap(),
+                                    Text(
+                                      formatOnlyDate(controller.reviewsResponse.value.results!.elementAt(index).createdAt!),
+                                      style: Theme.of(context).textTheme.labelMedium,
                                     ),
                                   ],
                                 ),
-                                separationGap(),
-                                Text(formatOnlyDate(controller.reviewsResponse.value.results!.elementAt(index).createdAt!),style: Theme.of(context).textTheme.labelMedium,),
-                              ],
-                            ),
                                 Column(
                                   children: [
-                                    Text(controller.reviewsResponse.value.results!.elementAt(index).content!,
-                                      style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),textAlign: TextAlign.justify,)
+                                    Text(
+                                      controller.reviewsResponse.value.results!.elementAt(index).content!,
+                                      style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
+                                      textAlign: TextAlign.justify,
+                                    )
                                   ],
                                 )
                               ],
                             ),
                           ),
-                        )
-                    ));
+                        )));
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 22,vertical: 20),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.errorContainer,
-                      borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: CircleAvatar(
-                                radius: 15,
-                                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                                backgroundImage: CachedNetworkImageProvider('${Constants.posterUrl}${controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath}'),
-                                child: controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath!=null?
-                                const SizedBox():const Icon(Icons.error),
+                      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.errorContainer, borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                  backgroundImage: CachedNetworkImageProvider(
+                                      '${Constants.posterUrl}${controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath}'),
+                                  child:
+                                      controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.avatarPath != null
+                                          ? const SizedBox()
+                                          : const Icon(Icons.error),
+                                ),
                               ),
-                            ),
-                            Text(controller.reviewsResponse.value.results!.elementAt(index).author.toString(),style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.primary),),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0),
-                              child: CircleAvatar(radius: 2,backgroundColor: AppColor.white,),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(right: 3.0),
-                              child: Icon(Icons.star,size: 15,color: Colors.yellow),
-                            ),
-                            Text(controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!=null?controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating!.toStringAsFixed(1):"Not Rated",style: Theme.of(context).textTheme.labelMedium,
-                              overflow: TextOverflow.fade,
-                            ),
-                          ],
-                        ),
-                        separationGap(),
-                        Column(
-                          children: [
-                            Text(controller.reviewsResponse.value.results!.elementAt(index).content!,
-                                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColor.textGray),maxLines: 5,)
-                          ],
-                        )
-                      ],
-                    )
-                  ),
-                ),),
+                              Text(
+                                controller.reviewsResponse.value.results!.elementAt(index).author.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(color: Theme.of(context).colorScheme.primary),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                child: CircleAvatar(
+                                  radius: 2,
+                                  backgroundColor: AppColor.white,
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(right: 3.0),
+                                child: Icon(Icons.star, size: 15, color: Colors.yellow),
+                              ),
+                              Text(
+                                controller.reviewsResponse.value.results!.elementAt(index).authorDetails!.rating != null
+                                    ? controller.reviewsResponse.value.results!
+                                        .elementAt(index)
+                                        .authorDetails!
+                                        .rating!
+                                        .toStringAsFixed(1)
+                                    : "Not Rated",
+                                style: Theme.of(context).textTheme.labelMedium,
+                                overflow: TextOverflow.fade,
+                              ),
+                            ],
+                          ),
+                          separationGap(),
+                          Column(
+                            children: [
+                              Text(
+                                controller.reviewsResponse.value.results!.elementAt(index).content!,
+                                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColor.textGray),
+                                maxLines: 5,
+                              )
+                            ],
+                          )
+                        ],
+                      )),
+                ),
+              ),
             ),
           ),
           Container(
@@ -610,12 +661,12 @@ class TabReviews extends StatelessWidget {
                       flex: 3,
                       child: Text(
                         'add_to_my_review'.tr,
-                        style: Theme.of(context).textTheme.titleSmall,textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleSmall,
+                        textAlign: TextAlign.center,
                       )),
                   const Expanded(child: Icon(Icons.arrow_drop_down)),
                 ],
               )),
-
         ],
       ),
     );
@@ -633,43 +684,40 @@ class TabDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('storyline'.tr,
-              style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Text('storyline'.tr, style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
           Text(
             controller.movieDetailsResponse.value.overview!,
             style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
             textAlign: TextAlign.justify,
           ),
           separationGap(),
-          Text('images'.tr,
-              style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Text('images'.tr, style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
           SizedBox(
             height: 120,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
               itemCount: controller.imageResponse.value.backdrops!.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: CachedNetworkImage(
-                        height: 75.h,
-                        width: 150.w,
-                        imageUrl:
-                        '${Constants.posterUrl}${controller.imageResponse.value.backdrops!.elementAt(index).filePath}',
-                        placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
-                        errorWidget: (context, url, error) => const Icon(Icons.error_outline),
-                        imageBuilder: (context, imageProvider) => Image(image: imageProvider),
-                        fit: BoxFit.cover,
-                      )),
-                ),),
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: CachedNetworkImage(
+                      height: 75.h,
+                      width: 150.w,
+                      imageUrl: '${Constants.posterUrl}${controller.imageResponse.value.backdrops!.elementAt(index).filePath}',
+                      placeholder: (context, url) => SizedBox(height: 75.h, width: 150.w, child: const ShimmerLoading()),
+                      errorWidget: (context, url, error) => const Icon(Icons.error_outline),
+                      imageBuilder: (context, imageProvider) => Image(image: imageProvider),
+                      fit: BoxFit.cover,
+                    )),
+              ),
+            ),
           )
-
         ],
       ),
     );
@@ -691,13 +739,14 @@ class TabOverView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('overview'.tr,
-              style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
-          Flexible(child: Text(
-            controller.movieDetailsResponse.value.overview!,
-            style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
-            textAlign: TextAlign.justify,
-          ),),
+          Text('overview'.tr, style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Flexible(
+            child: Text(
+              controller.movieDetailsResponse.value.overview??'NO DATA FOUND',
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
+              textAlign: TextAlign.justify,
+            ),
+          ),
           separationGap(),
           Row(
             children: List.generate(
@@ -711,10 +760,7 @@ class TabOverView extends StatelessWidget {
                             )),
                         Text(
                           controller.movieDetailsResponse.value.genres!.elementAt(index).name!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(color: AppColor.textGray, letterSpacing: 1),
+                          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray, letterSpacing: 1),
                         ),
                         index == controller.movieDetailsResponse.value.genres!.length - 1
                             ? Padding(
@@ -727,63 +773,88 @@ class TabOverView extends StatelessWidget {
                     )),
           ),
           separationGap(),
-          SectionSeparation(separationText: 'cast'.tr, actionText: 'show_all'.tr,isAction: true,),
-          Expanded(
-            child: Obx(() => controller.isLoadingCredits.value?
-            const Center(child: CircularProgressIndicator())
-                :Container(
-              height: 125.h,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: controller.creditsResponse.value.cast!.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) => Container(
-                  width: 100.w,
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 30.r,
-                        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                        backgroundImage: controller.creditsResponse.value.cast!.elementAt(index).profilePath!=null?
-                        CachedNetworkImageProvider('${Constants.posterUrl}${controller.creditsResponse.value.cast!.elementAt(index).profilePath}')
-                            :const CachedNetworkImageProvider(''),
-                        child: controller.creditsResponse.value.cast!.elementAt(index).profilePath!=null?const SizedBox():const Icon(Icons.error,size: 50,),
-                      ),
-                      Text(controller.creditsResponse.value.cast!.elementAt(index).character!,style: Theme.of(context).textTheme.labelMedium,textAlign: TextAlign.center,maxLines: 2,),
-                      Text(controller.creditsResponse.value.cast!.elementAt(index).originalName!,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
-                    ],
-                  ),
-                ),
-              ),
-            )),
-          ),
-          SectionSeparation(separationText: 'crew'.tr, actionText: 'show_all'.tr,isAction: true,),
-          Expanded(
-            child: Obx(() => controller.isLoadingCredits.value?
-            const Center(child: CircularProgressIndicator())
-                :Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: controller.creditsResponse.value.crew!.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) => Container(
-                      width: 100.w,
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
+          Text('cast'.tr, style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Flexible(
+            child: Obx(() => controller.isLoadingCredits.value
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.creditsResponse.value.cast!.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: () => controller.navigationToActorDetails(),
+                    child: SizedBox(
+                      width: 90.w,
+                      //padding: const EdgeInsets.symmetric(horizontal: 5),
                       child: Column(
                         children: [
                           CircleAvatar(
                             radius: 30.r,
                             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                            backgroundImage: controller.creditsResponse.value.crew!.elementAt(index).profilePath!=null?
-                            CachedNetworkImageProvider('${Constants.posterUrl}${controller.creditsResponse.value.crew!.elementAt(index).profilePath}')
-                            :const CachedNetworkImageProvider(''),
-                            child: controller.creditsResponse.value.crew!.elementAt(index).profilePath!=null?const SizedBox():const Icon(Icons.error,size: 50,),
+                            backgroundImage: controller.creditsResponse.value.cast!.elementAt(index).profilePath != null
+                                ? CachedNetworkImageProvider(
+                                    '${Constants.posterUrl}${controller.creditsResponse.value.cast!.elementAt(index).profilePath}')
+                                : const CachedNetworkImageProvider(''),
+                            child: controller.creditsResponse.value.cast!.elementAt(index).profilePath != null
+                                ? const SizedBox()
+                                : const Icon(
+                                    Icons.error,
+                                    size: 50,
+                                  ),
                           ),
-                          Text(controller.creditsResponse.value.crew!.elementAt(index).department!,style: Theme.of(context).textTheme.labelMedium,textAlign: TextAlign.center,maxLines: 2,),
-                          Text(controller.creditsResponse.value.crew!.elementAt(index).originalName!,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
+                          Text(
+                            controller.creditsResponse.value.cast!.elementAt(index).character!,
+                            style: Theme.of(context).textTheme.labelMedium,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.fade,
+                          ),
+                          Text(controller.creditsResponse.value.cast!.elementAt(index).originalName!,
+                              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
+                        ],
+                      ),
+                    ),
+                  ),
+                )),
+          ),
+          Text('crew'.tr, style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+          Flexible(
+            child: Obx(() => controller.isLoadingCredits.value
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.creditsResponse.value.crew!.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: () => controller.navigationToActorDetails(),
+                    child: SizedBox(
+                      width: 90.w,
+                      //padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 30.r,
+                            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                            backgroundImage: controller.creditsResponse.value.crew!.elementAt(index).profilePath != null
+                                ? CachedNetworkImageProvider(
+                                    '${Constants.posterUrl}${controller.creditsResponse.value.crew!.elementAt(index).profilePath}')
+                                : const CachedNetworkImageProvider(''),
+                            child: controller.creditsResponse.value.crew!.elementAt(index).profilePath != null
+                                ? const SizedBox()
+                                : const Icon(
+                                    Icons.error,
+                                    size: 50,
+                                  ),
+                          ),
+                          Text(
+                            controller.creditsResponse.value.crew!.elementAt(index).name??'NOT MENTIONED',
+                            style: Theme.of(context).textTheme.labelMedium,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.fade,
+                          ),
+                          Text(controller.creditsResponse.value.crew!.elementAt(index).department??'',
+                              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
                         ],
                       ),
                     ),
