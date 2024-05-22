@@ -11,10 +11,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../theme/colors.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/widgets/loader/shimmer_loading.dart';
+import '../../../utils/widgets/loader/shimmer_text.dart';
 import '../controllers/actor_details_controller.dart';
 
 class ActorDetailsView extends GetView<ActorDetailsController> {
@@ -39,7 +41,8 @@ class ActorDetailsView extends GetView<ActorDetailsController> {
                           colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor],
                           stops: const [0.5, 1],
                         )),
-                    child: CachedNetworkImage(
+                    child:controller.peopleResponse.value.profilePath==null?
+                    const ShimmerText(): CachedNetworkImage(
                       imageUrl: '${Constants.posterUrl}${controller.peopleResponse.value.profilePath}',
                       fit: BoxFit.cover,
                       width: double.maxFinite,
@@ -52,9 +55,10 @@ class ActorDetailsView extends GetView<ActorDetailsController> {
                   Positioned(
                     left: 0,
                     right: 0,
-                    bottom: 20,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    bottom: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 10),
+                      color: Colors.black.withOpacity(0.3),
                       child: Obx(() => Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -91,79 +95,63 @@ class ActorDetailsView extends GetView<ActorDetailsController> {
                 ],
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          Text(
-                            '9.0',
-                            style: Theme.of(context).textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                      Text(
-                        'vote_average'.tr,
-                        style: Theme.of(context).textTheme.labelSmall,
-                      )
-                    ],
+            Obx(() =>controller.isLoading.value? const SizedBox()
+                :Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Gender'.tr,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            controller.peopleResponse.value.gender==2? const Icon(
+                              Icons.male,
+                              color: Colors.blueAccent,
+                            ):const Icon(
+                              Icons.female,
+                              color: Colors.pink,
+                            ),
+                            Text(
+                              controller.peopleResponse.value.gender==2?'Male':'Female',
+                              style: Theme.of(context).textTheme.titleSmall,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          Text(
-                            '9.0',
-                            style: Theme.of(context).textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                      Text(
-                        'vote_average'.tr,
-                        style: Theme.of(context).textTheme.labelSmall,
-                      )
-                    ],
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          'popularity'.tr,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.favorite_border,
+                              color: Colors.redAccent,
+                            ),
+                            Text(
+                              controller.peopleResponse.value.popularity.toString(),
+                              style: Theme.of(context).textTheme.titleSmall,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          Text(
-                            '9.0',
-                            style: Theme.of(context).textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                      Text(
-                        'vote_average'.tr,
-                        style: Theme.of(context).textTheme.labelSmall,
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ),),
             separationGap(),
             const TabBar(
                 //controller: controller.tabController,
@@ -178,10 +166,10 @@ class ActorDetailsView extends GetView<ActorDetailsController> {
             Expanded(
               child: TabBarView(children: [
                 TabOverView(controller: controller),
-                Center(
+                const Center(
                   child: Text('Gallery'),
                 ),
-                Center(
+                const Center(
                   child: Text('Related Items'),
                 ),
               ]),
@@ -218,13 +206,13 @@ final ActorDetailsController controller;
             //   buttonTextStyle: const TextStyle(color: AppColor.primaryDark,fontSize: 16,fontWeight: FontWeight.bold),
             //   maxLines: 3,
             // ),
-            Text(controller.peopleResponse.value.biography!,style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),),
+            Text(controller.peopleResponse.value.biography??'No data found',style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),textAlign: TextAlign.justify,),
             Text('Born'.tr, style: Theme.of(context).textTheme.titleMedium!),
             Text('${formatDate(controller.peopleResponse.value.birthday)??'No data found'}',
               style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
               textAlign: TextAlign.justify,
             ),
-            Text('Westminster, London, England, UK',
+            Text(controller.peopleResponse.value.placeOfBirth??'No data found',
               style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
               textAlign: TextAlign.justify,
             ),
@@ -235,7 +223,7 @@ final ActorDetailsController controller;
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('24',style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+                    Text('--',style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
                     Text('Wins',style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray)),
                     const SizedBox(width: 5),
@@ -246,7 +234,7 @@ final ActorDetailsController controller;
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('75',style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
+                    Text('--',style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
                     Text('Nominations',style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray)),
                     const SizedBox(width: 5),
