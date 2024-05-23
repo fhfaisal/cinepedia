@@ -3,6 +3,7 @@ import 'package:cinepedia/app/theme/theme.dart';
 import 'package:cinepedia/app/utils/buttons/primary_button.dart';
 import 'package:cinepedia/app/utils/constants.dart';
 import 'package:cinepedia/app/utils/design_elements.dart';
+import 'package:cinepedia/app/utils/widgets/loader/shimmer_text.dart';
 import 'package:cinepedia/app/utils/widgets/loader/trending_shimmer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +88,9 @@ class CarouselSection extends StatelessWidget {
             height: 300.h,
             child: Stack(
               children: [
-                Obx(() => CarouselSlider.builder(
+                Obx(() => controller.isNowPlaying.value?
+                    const ShimmerText(text: 'Loading',):
+                    CarouselSlider.builder(
                   enableAutoSlider: true,
                   unlimitedMode: true,
                   controller: controller.sliderController,

@@ -13,6 +13,7 @@ import '../../../utils/constants.dart';
 
 class HomeController extends GetxController {
   final isLoading = false.obs;
+  final isNowPlaying = false.obs;
   final Rx<NowPlayingResponse> nowPlayingResponse = NowPlayingResponse().obs;
   final Rx<NowPlayingResponse> popularResponse = NowPlayingResponse().obs;
   final Rx<TvSeriesResponse> topTvSeriesResponse = TvSeriesResponse().obs;
@@ -42,13 +43,13 @@ class HomeController extends GetxController {
   }
 
   Future<NowPlayingResponse?> nowPlayingResponseDataCall() async {
-    isLoading.value = true;
+    isNowPlaying.value = true;
     Map<String, dynamic> values = {};
     await nowPlayingResponseApi(values).then((response) {
       if(response != null){
         nowPlayingResponse.value = response;
       }
-      isLoading.value = false;
+      isNowPlaying.value = false;
     });
     update();
     return null;

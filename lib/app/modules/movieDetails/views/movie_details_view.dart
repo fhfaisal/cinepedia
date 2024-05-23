@@ -20,43 +20,104 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => controller.isLoading.value
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Obx(() => SafeArea(
-              child: DefaultTabController(
-                length: controller.myTabs.length,
-                child: Scaffold(
-                    //appBar: AppBar(backgroundColor: Colors.transparent,),
-                    body: ListView(
-                  children: [
-                    imageSection(context),
-                    countingSection(context),
-                    separationGap(),
-                    ticketsSection(context),
-                    TabBar(
-                        controller: controller.tabController,
-                        isScrollable: true,
-                        unselectedLabelColor: AppColor.textGray,
-                        tabAlignment: TabAlignment.center,
-                        tabs: controller.myTabs),
-                    SizedBox(
-                      height: MediaQuery.sizeOf(context).height / 1.8,
-                      child: TabBarView(
-                        controller: controller.tabController,
+    return DefaultTabController(
+      length: controller.myTabs.length,
+      child: Scaffold(
+          //appBar: AppBar(backgroundColor: Colors.transparent,),
+          body: Obx(() =>controller.isLoading.value?Center(child: CircularProgressIndicator(),): ListView(
+            children: [
+              Stack(
+                children: [
+                  SizedBox(
+                    height: 300.h,
+                    child: controller.imageResponse.value.backdrops==null
+                        ? const ShimmerLoading()
+                        : CarouselSlider.builder(
+                      enableAutoSlider: true,
+                      unlimitedMode: true,
+                      slideTransform: const ParallaxTransform(),
+                      itemCount: controller.imageResponse.value.backdrops!.length,
+                      slideBuilder: (index) {
+                        return Container(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          foregroundDecoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: AlignmentDirectional.center,
+                                  end: AlignmentDirectional.bottomCenter,
+                                  colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor],
+                                  stops: const [0.0, 0.9])),
+                          child: CachedNetworkImage(
+                            imageUrl:
+                            '${Constants.posterUrl}${controller.imageResponse.value.backdrops!.elementAt(index).filePath ?? ''}',
+                            fit: BoxFit.fitHeight,
+                            width: double.maxFinite,
+                            height: 300.h,
+                            placeholder: (context, url) => SizedBox(
+                              height: 300.h,
+                              child: const ShimmerLoading(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+                      color: Colors.black.withOpacity(0.3),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TabOverView(controller: controller),
-                          TabDetails(controller: controller),
-                          TabReviews(controller: controller),
-                          TabSuggestions(controller: controller)
+                          Text(
+                            controller.movieDetailsResponse.value.originalTitle ?? 'Not Found',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '${'released'.tr} ${formatOnlyDate(controller.movieDetailsResponse.value.releaseDate ?? DateTime.timestamp())}',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              Text(' | ', style: Theme.of(context).textTheme.titleSmall),
+                              Text('${'runtime'.tr} ${formatRuntime(controller.movieDetailsResponse.value.runtime ?? 00)}',
+                                  style: Theme.of(context).textTheme.bodyLarge),
+                            ],
+                          ),
                         ],
                       ),
-                    )
-                  ],
-                )),
+                    ),
+                  )
+                ],
               ),
-            )));
+
+              countingSection(context),
+              separationGap(),
+              ticketsSection(context),
+              TabBar(
+                  controller: controller.tabController,
+                  isScrollable: true,
+                  unselectedLabelColor: AppColor.textGray,
+                  tabAlignment: TabAlignment.center,
+                  tabs: controller.myTabs),
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height / 1.8,
+                child: TabBarView(
+                  controller: controller.tabController,
+                  children: [
+                    TabOverView(controller: controller),
+                    TabDetails(controller: controller),
+                    TabReviews(controller: controller),
+                    TabSuggestions(controller: controller)
+                  ],
+                ),
+              )
+            ],
+          )))
+    );
   }
 
   Container ticketsSection(BuildContext context) {
@@ -208,94 +269,6 @@ class MovieDetailsView extends GetView<MovieDetailsController> {
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  Stack imageSection(BuildContext context) {
-    return Stack(
-      children: [
-        SizedBox(
-          height: 300.h,
-          child: Obx(
-            () => CarouselSlider.builder(
-              enableAutoSlider: true,
-              unlimitedMode: true,
-              slideTransform: const ParallaxTransform(),
-              itemCount: controller.imageResponse.value.backdrops!.length,
-              slideBuilder: (index) {
-                controller.selectedIndex.value = index;
-                return Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  foregroundDecoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: AlignmentDirectional.center,
-                          end: AlignmentDirectional.bottomCenter,
-                          colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor],
-                          stops: const [0.0, 0.9])),
-                  child: CachedNetworkImage(
-                    imageUrl: '${Constants.posterUrl}${controller.imageResponse.value.backdrops!.elementAt(index).filePath}',
-                    fit: BoxFit.fitHeight,
-                    width: double.maxFinite,
-                    height: 300.h,
-                    placeholder: (context, url) => SizedBox(
-                      height: 300.h,
-                      child: const ShimmerLoading(),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-        // Container(
-        //   color: Theme.of(context).scaffoldBackgroundColor,
-        //   foregroundDecoration: BoxDecoration(
-        //       gradient: LinearGradient(
-        //           begin: AlignmentDirectional.center,
-        //           end: AlignmentDirectional.bottomCenter,
-        //           colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor.withOpacity(0.93)],
-        //           stops: const [0.0, 0.9])),
-        //   child: CachedNetworkImage(
-        //     imageUrl: '${Constants.posterUrl}${controller.movieDetailsResponse.value.backdropPath}',
-        //     fit: BoxFit.fitHeight,
-        //     width: double.maxFinite,
-        //     height: 300.h,
-        //     placeholder: (context, url) => SizedBox(
-        //       height: 300.h,
-        //       child: const ShimmerLoading(),
-        //     ),
-        //   ),
-        // ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 20,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  controller.movieDetailsResponse.value.originalTitle!,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${'released'.tr} ${formatOnlyDate(controller.movieDetailsResponse.value.releaseDate)}',
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    Text(' | ', style: Theme.of(context).textTheme.titleSmall),
-                    Text('${'runtime'.tr} ${formatRuntime(controller.movieDetailsResponse.value.runtime!)}',
-                        style: Theme.of(context).textTheme.bodyLarge),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        )
       ],
     );
   }
@@ -742,7 +715,7 @@ class TabOverView extends StatelessWidget {
           Text('overview'.tr, style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
           Flexible(
             child: Text(
-              controller.movieDetailsResponse.value.overview??'NO DATA FOUND',
+              controller.movieDetailsResponse.value.overview ?? 'NO DATA FOUND',
               style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColor.textGray),
               textAlign: TextAlign.justify,
             ),
@@ -778,88 +751,90 @@ class TabOverView extends StatelessWidget {
             child: Obx(() => controller.isLoadingCredits.value
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: controller.creditsResponse.value.cast!.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => GestureDetector(
-                    onTap: () => controller.navigationToActorDetails(controller.creditsResponse.value.cast!.elementAt(index).id),
-                    child: SizedBox(
-                      width: 90.w,
-                      //padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 30.r,
-                            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                            backgroundImage: controller.creditsResponse.value.cast!.elementAt(index).profilePath != null
-                                ? CachedNetworkImageProvider(
-                                    '${Constants.posterUrl}${controller.creditsResponse.value.cast!.elementAt(index).profilePath}')
-                                : const CachedNetworkImageProvider(''),
-                            child: controller.creditsResponse.value.cast!.elementAt(index).profilePath != null
-                                ? const SizedBox()
-                                : const Icon(
-                                    Icons.error,
-                                    size: 50,
-                                  ),
-                          ),
-                          Text(
-                            controller.creditsResponse.value.cast!.elementAt(index).character!,
-                            style: Theme.of(context).textTheme.labelMedium,
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.fade,
-                          ),
-                          Text(controller.creditsResponse.value.cast!.elementAt(index).originalName!,
-                              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
-                        ],
+                    shrinkWrap: true,
+                    itemCount: controller.creditsResponse.value.cast!.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) => GestureDetector(
+                      onTap: () =>
+                          controller.navigationToActorDetails(controller.creditsResponse.value.cast!.elementAt(index).id),
+                      child: SizedBox(
+                        width: 90.w,
+                        //padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 30.r,
+                              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                              backgroundImage: controller.creditsResponse.value.cast!.elementAt(index).profilePath != null
+                                  ? CachedNetworkImageProvider(
+                                      '${Constants.posterUrl}${controller.creditsResponse.value.cast!.elementAt(index).profilePath}')
+                                  : const CachedNetworkImageProvider(''),
+                              child: controller.creditsResponse.value.cast!.elementAt(index).profilePath != null
+                                  ? const SizedBox()
+                                  : const Icon(
+                                      Icons.error,
+                                      size: 50,
+                                    ),
+                            ),
+                            Text(
+                              controller.creditsResponse.value.cast!.elementAt(index).character!,
+                              style: Theme.of(context).textTheme.labelMedium,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.fade,
+                            ),
+                            Text(controller.creditsResponse.value.cast!.elementAt(index).originalName!,
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                )),
+                  )),
           ),
           Text('crew'.tr, style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
           Flexible(
             child: Obx(() => controller.isLoadingCredits.value
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: controller.creditsResponse.value.crew!.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => GestureDetector(
-                    onTap: () => controller.navigationToActorDetails(controller.creditsResponse.value.crew!.elementAt(index).id),
-                    child: SizedBox(
-                      width: 90.w,
-                      //padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 30.r,
-                            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                            backgroundImage: controller.creditsResponse.value.crew!.elementAt(index).profilePath != null
-                                ? CachedNetworkImageProvider(
-                                    '${Constants.posterUrl}${controller.creditsResponse.value.crew!.elementAt(index).profilePath}')
-                                : const CachedNetworkImageProvider(''),
-                            child: controller.creditsResponse.value.crew!.elementAt(index).profilePath != null
-                                ? const SizedBox()
-                                : const Icon(
-                                    Icons.error,
-                                    size: 50,
-                                  ),
-                          ),
-                          Text(
-                            controller.creditsResponse.value.crew!.elementAt(index).name??'NOT MENTIONED',
-                            style: Theme.of(context).textTheme.labelMedium,
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.fade,
-                          ),
-                          Text(controller.creditsResponse.value.crew!.elementAt(index).department??'',
-                              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
-                        ],
+                    shrinkWrap: true,
+                    itemCount: controller.creditsResponse.value.crew!.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) => GestureDetector(
+                      onTap: () =>
+                          controller.navigationToActorDetails(controller.creditsResponse.value.crew!.elementAt(index).id),
+                      child: SizedBox(
+                        width: 90.w,
+                        //padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 30.r,
+                              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                              backgroundImage: controller.creditsResponse.value.crew!.elementAt(index).profilePath != null
+                                  ? CachedNetworkImageProvider(
+                                      '${Constants.posterUrl}${controller.creditsResponse.value.crew!.elementAt(index).profilePath}')
+                                  : const CachedNetworkImageProvider(''),
+                              child: controller.creditsResponse.value.crew!.elementAt(index).profilePath != null
+                                  ? const SizedBox()
+                                  : const Icon(
+                                      Icons.error,
+                                      size: 50,
+                                    ),
+                            ),
+                            Text(
+                              controller.creditsResponse.value.crew!.elementAt(index).name ?? 'NOT MENTIONED',
+                              style: Theme.of(context).textTheme.labelMedium,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.fade,
+                            ),
+                            Text(controller.creditsResponse.value.crew!.elementAt(index).department ?? '',
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColor.textGray)),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                )),
+                  )),
           ),
         ],
       ),

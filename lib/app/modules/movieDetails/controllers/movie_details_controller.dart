@@ -26,6 +26,7 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
 
   final isLoading = false.obs;
   final isLoadingCredits = false.obs;
+  final isLoadingImage = false.obs;
   final Rx<MovieDetailsResponse> movieDetailsResponse = MovieDetailsResponse().obs;
   final Rx<CreditsResponse> creditsResponse = CreditsResponse().obs;
   final Rx<ImagesResponse> imageResponse = ImagesResponse().obs;
@@ -53,9 +54,9 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
     super.onClose();
   }
   fetchAllData(){
+    fetchImages();
     fetchMovieDetails();
     fetchCredits();
-    fetchImages();
     fetchReviews();
     fetchSimilar();
     fetchRecommendations();
@@ -97,12 +98,14 @@ class MovieDetailsController extends GetxController with GetTickerProviderStateM
     update();
   }
   Future<void> fetchImages()async {
-    isLoading.value==true;
+    isLoadingImage.value==true;
     await imageResponseApi(movieId).then((response){
       if(response !=null){
         imageResponse.value=response;
       }
     });
+    isLoadingImage.value=false;
+    update();
   }
   Future<void> fetchReviews()async {
     isLoading.value==true;

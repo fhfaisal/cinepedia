@@ -1,3 +1,4 @@
+import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 
 import '../modules/actorDetails/bindings/actor_details_binding.dart';
@@ -18,24 +19,28 @@ class AppPages {
 
   static final routes = [
     GetPage(
-      name: _Paths.HOME,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
-    ),
+        name: _Paths.HOME,
+        page: () => const HomeView(),
+        binding: HomeBinding(),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 500)),
     GetPage(
-      name: _Paths.BOTTOM_NAVIGATION_BAR,
-      page: () => const BottomNavigationBarView(),
-      binding: BottomNavigationBarBinding(),
-    ),
+        name: _Paths.BOTTOM_NAVIGATION_BAR,
+        page: () => const BottomNavigationBarView(),
+        binding: BottomNavigationBarBinding(),
+        transition: Transition.native,
+        transitionDuration: const Duration(milliseconds: 500)),
     GetPage(
-      name: _Paths.MOVIE_DETAILS,
-      page: () => const MovieDetailsView(),
-      binding: MovieDetailsBinding(),
-    ),
+        name: _Paths.MOVIE_DETAILS,
+        page: () => const MovieDetailsView(),
+        binding: MovieDetailsBinding(),
+        transition: Transition.rightToLeftWithFade,
+        transitionDuration: const Duration(milliseconds: 500)),
     GetPage(
-      name: _Paths.ACTOR_DETAILS,
-      page: () => const ActorDetailsView(),
-      binding: ActorDetailsBinding(),
-    ),
+        name: _Paths.ACTOR_DETAILS,
+        page: () => const ActorDetailsView(),
+        binding: ActorDetailsBinding(),
+        transition: Transition.zoom,
+        transitionDuration: const Duration(milliseconds: 500)),
   ];
 }
