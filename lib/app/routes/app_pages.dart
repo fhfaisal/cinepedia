@@ -1,4 +1,5 @@
 import 'package:flutter/animation.dart';
+
 import 'package:get/get.dart';
 
 import '../modules/actorDetails/bindings/actor_details_binding.dart';
@@ -9,6 +10,8 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/movieDetails/bindings/movie_details_binding.dart';
 import '../modules/movieDetails/views/movie_details_view.dart';
+import '../modules/searchPage/bindings/search_page_binding.dart';
+import '../modules/searchPage/views/search_page_view.dart';
 
 part 'app_routes.dart';
 
@@ -42,5 +45,10 @@ class AppPages {
         binding: ActorDetailsBinding(),
         transition: Transition.zoom,
         transitionDuration: const Duration(milliseconds: 500)),
+    GetPage(
+      name: _Paths.SEARCH_PAGE,
+      page: () => const SearchPageView(),
+      binding: SearchPageBinding(),
+    ),
   ];
 }

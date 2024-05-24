@@ -1,4 +1,6 @@
 import 'package:cinepedia/app/modules/home/controllers/home_controller.dart';
+import 'package:cinepedia/app/modules/searchPage/controllers/search_page_controller.dart';
+import 'package:cinepedia/app/modules/searchPage/views/search_page_view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -55,12 +57,8 @@ Widget getPage(int index) {
         isButton: false,
       );
     case 2:
-      return EmptyPage(
-        buttonText: 'go_back'.tr,
-        title: 'search_empty_title'.tr,
-        subtitle: 'search_empty_message'.tr,
-        isButton: false,
-      );
+      Get.put(SearchPageController());
+      return const SearchPageView();
     default:
       return Container(
         child:  Center(
