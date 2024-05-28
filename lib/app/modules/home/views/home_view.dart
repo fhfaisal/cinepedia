@@ -265,7 +265,7 @@ class NowPlaying extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() => controller.isLoading.value
-        ? SizedBox(height: 130.h, child: const NowPlayingLoader())
+        ? SizedBox(height: 130.h, child: const ShimmerLoading())
         : SizedBox(
             height: 120.h,
             child: ListView.builder(

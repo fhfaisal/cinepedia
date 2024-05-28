@@ -13,34 +13,40 @@ class BottomNavigationBarView extends GetView<BottomNavigationBarController> {
   const BottomNavigationBarView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Scaffold(
-      body: getPage(controller.selectedIndex.value),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).navigationBarTheme.backgroundColor,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.white.withOpacity(.60),
-        selectedFontSize: 14,
-        unselectedFontSize: 14,
-        currentIndex: controller.selectedIndex.value,
-        onTap: (value) => controller.changeTabIndex(value),
+    return WillPopScope(
+      onWillPop: () async {
+        await controller.showAlertDialog(context);
+        return true; // or false depending on your logic
+      },
+      child: Obx(() => Scaffold(
+        body: getPage(controller.selectedIndex.value),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Theme.of(context).navigationBarTheme.backgroundColor,
+          selectedItemColor: Theme.of(context).colorScheme.primary,
+          unselectedItemColor: Colors.white.withOpacity(.60),
+          selectedFontSize: 14,
+          unselectedFontSize: 14,
+          currentIndex: controller.selectedIndex.value,
+          onTap: (value) => controller.changeTabIndex(value),
 
-        items:  [
-          BottomNavigationBarItem(
-            label:'home'.tr,
-            icon: Icon(Icons.movie),
-          ),
-          BottomNavigationBarItem(
-            label:'categories'.tr,
-            icon: Icon(Icons.category),
-          ),
-          BottomNavigationBarItem(
-            label:'search'.tr,
-            icon: Icon(Icons.search),
-          ),
-        ],
-      ),
-    ));
+          items:  [
+            BottomNavigationBarItem(
+              label:'home'.tr,
+              icon: Icon(Icons.movie),
+            ),
+            BottomNavigationBarItem(
+              label:'categories'.tr,
+              icon: Icon(Icons.category),
+            ),
+            BottomNavigationBarItem(
+              label:'search'.tr,
+              icon: Icon(Icons.search),
+            ),
+          ],
+        ),
+      )),
+    );
   }
 }
 

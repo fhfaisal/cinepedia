@@ -3,6 +3,8 @@ import 'package:cinepedia/app/theme/colors.dart';
 import 'package:cinepedia/app/utils/buttons/primary_button.dart';
 import 'package:cinepedia/app/utils/design_elements.dart';
 import 'package:cinepedia/app/utils/imagePath/common.dart';
+import 'package:cinepedia/app/utils/widgets/empty.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,8 +33,8 @@ class SearchPageView extends GetView<SearchPageController> {
               child: SizedBox(
                 height: 47.h,
                 child: SearchBar(
-                  //controller: controller.searchController.value,
-                  //onChanged: (value) => controller.doctorSearchList(),
+                  controller: controller.searchController.value,
+                  onChanged: (value) => controller.fetchSearchData(),
                   leading: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: SvgPicture.asset(
@@ -56,93 +58,118 @@ class SearchPageView extends GetView<SearchPageController> {
             const SizedBox(
               height: 10,
             ),
-            Expanded(
-                child: ListView.separated(
-              itemCount: 10,
-              separatorBuilder: (context, index) => separationGap(),
-              itemBuilder: (context, index) => Container(
-                height: 150,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          topLeft: Radius.circular(10),
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: '${Constants.posterUrl}${'/6lyXW6GC7ruwDmhvEcRd9d46ZO7.jpg'}',
-                          fit: BoxFit.fitHeight,
-                          width: double.maxFinite,
-                          height: double.maxFinite,
-                          placeholder: (context, url) => SizedBox(
-                            height: 150.h,
-                            child: const ShimmerLoading(),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                        flex: 6,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                Expanded(
-                                    child: Text('Watch Again On Disney+ Watch Again On Disney+',style: Theme.of(context).textTheme.titleSmall,)),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      ),
-                                      Text(
-                                        '0.0',
-                                        style: Theme.of(context).textTheme.titleSmall,
-                                      )
-                                    ],
-                                  ),
-                              ],),
-                              Text('Watch | Again | On ',style: Theme.of(context).textTheme.labelMedium,),
-                              const Spacer(),
-                              Text("When a new toy called joins Woody and the gang, a road trip alongside old and new friends reveals how big the world can be.",
-                                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColor.textGray),
-                                textAlign: TextAlign.justify,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-
+             Expanded(
+                child: Obx(() => controller.searchResponse.value.results==null?
+                     Center(child: EmptyPage(
+                        title: 'Empty',
+                        subtitle: '',
+                      image: SvgPicture.asset(CommonImage.searchIcon,width: 150,),
+                    )):
+                Obx(() => ListView.separated(
+                  itemCount: controller.searchResponse.value.results!.length,
+                  separatorBuilder: (context, index) => separationGap(),
+                  itemBuilder: (context, index) => Container(
+                    height: 150,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                    child: GestureDetector(
+                      onTap: () => controller.navigateToMovieDetails(index),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(10),
+                                topLeft: Radius.circular(10),
                               ),
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 5),
-                                height: 25,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    gradient: LinearGradient(
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                        stops: const [0.1, 1],
-                                        colors: [Theme.of(context).colorScheme.onPrimary,Theme.of(context).colorScheme.onSecondary])),
-                                child:Text('Tap To See Details',
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.labelMedium
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                '${Constants.posterUrl}${controller.searchResponse.value.results!.elementAt(index).posterPath ?? controller.searchResponse.value.results!.elementAt(index).backdropPath}',
+                                fit: BoxFit.cover,
+                                width: double.maxFinite,
+                                height: double.maxFinite,
+                                placeholder: (context, url) => SizedBox(
+                                  height: 150.h,
+                                  child: const ShimmerLoading(),
                                 ),
                               ),
-
-                            ],
+                            ),
                           ),
-                        )),
-                  ],
-                ),
-              ),
-            ))
+                          Expanded(
+                              flex: 6,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            '${controller.searchResponse.value.results!.elementAt(index).title ?? controller.searchResponse.value.results!.elementAt(index).originalTitle}',
+                                            style: Theme.of(context).textTheme.titleSmall,
+                                            maxLines: 2,
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              Icons.star,
+                                              color: Colors.amber,
+                                            ),
+                                            Text(
+                                              controller.searchResponse.value.results!.elementAt(index).voteAverage!.toStringAsFixed(1),
+                                              style: Theme.of(context).textTheme.titleSmall,
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      controller.searchResponse.value.results!.elementAt(index).releaseDate??'----/--/--',
+                                      style: Theme.of(context).textTheme.labelMedium!.copyWith(height: 1.2),
+                                    ),
+                                    Text(
+                                        controller.searchResponse.value.results!.elementAt(index).overview??'',
+                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColor.textGray),
+                                      textAlign: TextAlign.justify,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const Spacer(),
+                                    GestureDetector(
+                                      onTap: () => controller.navigateToMovieDetails(index),
+                                      child: Container(
+                                        margin: const EdgeInsets.symmetric(vertical: 5),
+                                        height: 25,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(15),
+                                            gradient: LinearGradient(
+                                                begin: Alignment.centerLeft,
+                                                end: Alignment.centerRight,
+                                                stops: const [
+                                                  0.1,
+                                                  1
+                                                ],
+                                                colors: [
+                                                  Theme.of(context).colorScheme.onPrimary,
+                                                  Theme.of(context).colorScheme.onSecondary
+                                                ])),
+                                        child: Text('Tap To See Details',
+                                            textAlign: TextAlign.center, style: Theme.of(context).textTheme.labelMedium),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                ))))
           ],
         ),
       )),

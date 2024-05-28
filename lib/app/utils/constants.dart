@@ -13,6 +13,7 @@ class Constants{
   static const String reviews="/reviews";
   static const String similar="/similar";
   static const String recommendations="/recommendations";
+  static const String search="search/";
   ///TV SERIES API
   static const String tv="tv/";
   static const String topRated="top_rated";

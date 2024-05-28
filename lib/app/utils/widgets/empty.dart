@@ -9,6 +9,7 @@ class EmptyPage extends StatelessWidget {
     this.buttonText,
     this.onTap,
     this.isButton=false,
+    this.image
   });
 
   final String? title;
@@ -16,6 +17,7 @@ class EmptyPage extends StatelessWidget {
   final String? buttonText;
   final VoidCallback? onTap;
   final bool? isButton;
+  final Widget? image;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class EmptyPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Image(
+             image??const Image(
               image: AssetImage(CommonImage.emptyPage),
               height: 200,
             ),
